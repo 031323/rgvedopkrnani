@@ -17,7 +17,10 @@ d = [(lambda l: (n(l[0], l[1], l[2], l[3]), l[4], l[5]))(l.split('\t')) for l in
 
 suci = dict()
 
-#for 
+for i, e in enumerate(d):
+	for w in e[2].split(' '):
+		if not w in suci: suci[w] = []
+		suci[w].append(i)
 
 nre = '[0-9]{1,2}\\.[0-9]{3}\\.[0-9]{2}[a-z]'
 
@@ -60,4 +63,4 @@ def sndanm():
 
 sndanm()
 
-print(set(u[2] for u in t))
+print(d[suci['indra'][0]])
