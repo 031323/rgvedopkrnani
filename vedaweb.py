@@ -9,6 +9,8 @@ class krmh:
 		if self.i <= len(self):
 			return self[self.i]
 		raise StopIteration
+	def items(self):
+		return enumerate(self, 1)
 
 class root:
 	def __init__(self, r):
@@ -17,6 +19,10 @@ class root:
 class pdm(root):
 	def drmani(self):
 		return [s.get('value') for s in self.r.findall('.//{http://www.tei-c.org/ns/1.0}symbol')]
+	def rupm(self):
+		return self.r[0][0].text
+	def mulm(self):
+		return self.r[1][0].text
 
 class crnm(krmh):
 	def __init__(self, r, c):
@@ -29,15 +35,32 @@ class crnm(krmh):
 	def __len__(self):
 		return len(self.r[self.c*2-1].getchildren())
 
+strata_order = 'ASNCPasncp'
+
+def stratify(l):
+	l2 = [[] for s in strata_order]
+	for r in l:
+		l2[strata_order.index(r.strata())].append(r)
+	return [i for l3 in l2 for i in l3]
+
 class rk(krmh, root):
 	def strata(self):
-		return frozenset([p[2][1].text for p in self.r[1]])
+		stratas = [p[2][1].text for p in self.r[1]]
+		for s in strata_order:
+			if s in stratas: return s
+	def source(self, s):
+		for v in self.r:
+			if s in v.attrib.values():
+				return v[0].text
+		return ''		
 	def __getitem__(self, c):
 		return crnm(self.r[0], c)
 	def __len__(self):
-		return len(self.r[0].getchildren())
+		return int(len(self.r[0].getchildren())/2)
 
 class suktm(krmh, root):
+	def devta(self):
+		return self.r[0][0][1].text
 	def __getitem__(self, R):
 		return rk(self.r[R])
 	def __len__(self):
