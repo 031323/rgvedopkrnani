@@ -51,8 +51,8 @@ class rk(krmh, root):
 	def source(self, s):
 		for v in self.r:
 			if s in v.attrib.values():
-				return v[0].text
-		return ''		
+				return '\n'.join([ch.text for ch in v.getchildren()])
+		return ''
 	def __getitem__(self, c):
 		return crnm(self.r[0], c)
 	def __len__(self):
@@ -85,6 +85,10 @@ class rv(krmh):
 			return self.mndlani[m-1]
 		else:
 			raise IndexError()
+	def ekmekm(self):
+		for m in range(1, 11):
+			yield self[m]
+			self.mndlani[m - 1] = None
 	def __next__(self):
 		self.i += 1
 		if self.i < 11:
