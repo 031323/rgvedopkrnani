@@ -20,11 +20,11 @@ for m in rv.ekmekm():
 
 def pdarsta(p):
 	P = pdsnkyah[p][1]
-	if not P: return 'annta'
+	if not P: return -1
 	return pdsnkyah[p][0]/pdsnkyah[p][1]
 
 def ttm(p):
-	return len(pdsnkyah[pr][2]) > 1
+	return len(pdsnkyah[pr][2]) > 2
 
 def rgarsta(r):
 	n = 0
@@ -37,22 +37,5 @@ def rgarsta(r):
 				ar = pdsnkyah[pr][0]
 				if not ar: return 0
 				a += pdsnkyah[pr][1]/ar
-	if not a: return 'annta'
+	if not a: return -1
 	return n/a
-
-ma = [None] * 10
-
-i = 0
-for m in rv.ekmekm():
-	n = 0
-	ar = 0
-	for s in m:
-		for r in s:
-			n += 1
-			if rgarsta(r) == 'annta':
-				print(r.source('vnh'))
-			else: ar += rgarsta(r)
-	ma[i] = ar/n
-	i += 1
-
-print([(m, ma[m-1]) for m in sorted(range(1, 11), reverse = True, key = lambda x: ma[x-1])])
