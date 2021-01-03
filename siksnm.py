@@ -9,7 +9,7 @@ def sngrhh():
 		mi += 1
 		for si, s in enumerate(m):
 			if s[1].strata() == 'A':
-				ss.append((mi, si, '\n'.join([c.smhita() for r in s for c in r]), [p.mulm() for r in s for c in r for p in c]))
+				ss.append((mi, si, '\n'.join([c.smhita() for r in s for c in r]), [p.mulm() for r in s for c in r for p in c], len(s), ))
 	return ss
 
 def apricyh(s, pricitani):
@@ -21,7 +21,17 @@ def pricykrmh(ss):
 	t = []
 	for i in range(len(s)):
 		i = min(range(len(s)), key = lambda x: apricyh(s[x], pricitani))
-		t.append(s[i])
-		#pricitani = pricitani.union(set(s[i][3]))
+		t.append(s[i]+tuple([apricyh(s[i], pricitani)]))
+		pricitani = pricitani.union(set(s[i][3]))
 		s = s[:i] + s[i+1:]
 	return t
+
+def grdrkrmh(ss, fn):
+	with open(fn, 'w+') as f:
+		f.write('<html><body>')
+		nirdesh = lambda x, y, z, i: f'{i}. <a href="https://vedaweb.uni-koeln.de/rigveda/view/id/{x}.1">{x}</a> ({y}) ({z})'
+		f.write('<br>'.join([nirdesh(f'{s[0]}.{s[1]+1}', s[4], s[5], si+1) for si, s in enumerate(ss)]))
+		f.write('</body></html>')
+
+ss = sngrhh()
+grdrkrmh(pricykrmh(ss), 'arsgrdrkrmh.html')
