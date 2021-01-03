@@ -26,16 +26,20 @@ def pdarsta(p):
 def ttm(p):
 	return len(pdsnkyah[pr][2]) > 2
 
-def rgarsta(r):
+def arsta(pt):
 	n = 0
 	a = 0
-	for c in r:
-		for p in c:
-			pr = p.rupm()
-			if ttm(pr):
-				n += 1
-				ar = pdsnkyah[pr][0]
-				if not ar: return 0
-				a += pdsnkyah[pr][1]/ar
+	for p in pt:
+		pr = p.rupm()
+		if ttm(pr):
+			n += 1
+			ar = pdsnkyah[pr][0]
+			if not ar: return 0
+			a += pdsnkyah[pr][1]/ar
 	if not a: return -1
 	return n/a
+
+def suktarsta(s):
+	return arsta([p for r in s for c in r for p in c])
+def rgarsta(r):
+	return arsta([p for c in r for p in c])
