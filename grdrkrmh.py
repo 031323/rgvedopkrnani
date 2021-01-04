@@ -8,7 +8,7 @@ def sngrhh():
 	for m in rv.ekmekm():
 		mi += 1
 		for si, s in enumerate(m):
-			if s[1].strata() == 'A':
+			if 1:#s[1].strata() == 'A':
 				ss.append((mi, si, '\n'.join([c.smhita() for r in s for c in r]), [p.mulm() for r in s for c in r for p in c], len(s), ))
 	return ss
 
@@ -26,12 +26,12 @@ def pricykrmh(ss):
 		s = s[:i] + s[i+1:]
 	return t
 
-def grdrkrmh(ss, fn):
+def grdrkrmh(ss, fn, t):
 	with open(fn, 'w+') as f:
-		f.write('<html><body>')
+		f.write(f'<html><head><title>{t}</title></head><body>')
 		nirdesh = lambda x, y, z, i: f'{i}. <a href="https://vedaweb.uni-koeln.de/rigveda/view/id/{x}.1">{x}</a> ({y}) ({z})'
 		f.write('<br>'.join([nirdesh(f'{s[0]}.{s[1]+1}', s[4], s[5], si+1) for si, s in enumerate(ss)]))
 		f.write('</body></html>')
 
 ss = sngrhh()
-grdrkrmh(pricykrmh(ss), 'arsgrdrkrmh.html')
+grdrkrmh(pricykrmh(ss), 'grdrkrmh.html', "गृ॒ध्र॒क्र॒मः")
