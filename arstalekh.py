@@ -28,8 +28,8 @@ for m in rv.ekmekm():
 				print('\n')
 	i += 1
 
-for k, a in strata.items():
-	print(k + ' ' + str(sum(a)/len(a)))
+for k, b in strata.items():
+	print(k + ' ' + str(sum(b)/len(b)))
 
 l = []
 s = sorted([ar for m in a for ar in m if ar > 0])
