@@ -22,7 +22,7 @@ fn main() {
 		})
 		.collect();
 	
-	let iast: Vec<String> = fs::read_to_string("iast")
+	let iast: Vec<String> = fs::read_to_string("iast2")
 		.expect("file?!")
 		.split('\n')
 		.map(|s: &str| s.to_string())
@@ -91,9 +91,9 @@ fn main() {
 						aksrani[i] += slp[D].aksrani[i];
 					}
 					println!("{}", iast[D]);
-					println!("{} {} {}", ptitani, aksrani.iter().fold(0, |n, x| {
+					/*println!("{} {} {}", ptitani, aksrani.iter().fold(0, |n, x| {
 						n + if *x > m { 1 } else { 0 }
-					}), m);
+					}), m);*/
 				},
 				None => {},
 			}
