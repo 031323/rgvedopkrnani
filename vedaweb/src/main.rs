@@ -1,35 +1,21 @@
 enum Purush {
-	Prtmh,
-	Mdymh,
-	Uttmh,
+	Prtmh, Mdymh, Uttmh,
 }
 
 enum Vibktih {
-	Krta,
-	Krm,
-	Krnm,
-	Smprdanm,
-	Apadanm,
-	Smbndh,
-	Adikrnm,
-	Smbodnm,
+	Krta, Krm, Krnm, Smprdanm, Apadanm, Smbndh, Adikrnm, Smbodnm,
 }
 
 enum Vcnm {
-	Ekm,
-	Dve,
-	Bhuni,
+	Ekm, Dve, Bhuni,
 }
 
 enum Vacym {
-	Krm,
-	Krta,
-	Bavh,
+	Krm, Krta, Bavh,
 }
 
 enum Lingm {
-	Stri,
-	Puman,
+	Stri, Puman, Npumskm,
 }
 
 struct rc {
