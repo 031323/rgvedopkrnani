@@ -2,13 +2,23 @@ use std::env;
 use std::io::{stdout, Write};
 use vedaweb;
 
-use crossterm::{
-    event, execute,
-    style::{Color, Print, ResetColor, SetBackgroundColor, SetForegroundColor},
-    ExecutableCommand, Result,
-};
+use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
-fn main() -> Result<()> {
+#[get("/")]
+async fn hello() -> impl Responder {
+    HttpResponse::Ok().body("Hello world!")
+}
+
+#[post("/echo")]
+async fn echo(req_body: String) -> impl Responder {
+    HttpResponse::Ok().body(req_body)
+}
+
+async fn manual_hello() -> impl Responder {
+    HttpResponse::Ok().body("Hey there!")
+}
+
+fn main() {
     let args: Vec<_> = env::args().collect();
 
     if args.len() != 2 {
@@ -17,21 +27,4 @@ fn main() -> Result<()> {
     }
 
     let mndlani = vedaweb::aropnm(&args[1]);
-    
-    execute!(
-        stdout(),
-        SetForegroundColor(Color::Blue),
-        SetBackgroundColor(Color::Black),
-        Print("Styled text here."),
-        ResetColor
-    )?;
-
-    // or using functions
-    stdout()
-        .execute(SetForegroundColor(Color::Blue))?
-        .execute(SetBackgroundColor(Color::Red))?
-        .execute(Print("Styled text here."))?
-        .execute(ResetColor)?;
-
-    Ok(())
 }
