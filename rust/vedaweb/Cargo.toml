@@ -1,0 +1,8 @@
+[package]
+name = "vedaweb"
+version = "0.1.0"
+authors = ["ujjwalraajput <ujjwal.raajput@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+roxmltree = "0.4.1"
