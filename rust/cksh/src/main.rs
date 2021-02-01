@@ -7,6 +7,12 @@ use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 #[get("/{path}")]
 async fn hello(data: web::Data<Vec<Vec<Vec<vedaweb::Rc>>>>, path: web::Path<String>) -> impl Responder {
+    /*fn lekh(r: &vedaweb::Rc) {
+        format!("{}\n\n{}", r.smhita, r.crnani.iter().map(|c| { c
+            .iter()
+            .map(|p| format!("{}", p.rupm))
+        })
+    }*/
     format!("{}\n{}", path.into_inner(), data[0][0][0])
 }
 

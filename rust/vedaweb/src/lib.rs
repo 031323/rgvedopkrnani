@@ -3,10 +3,19 @@ use crate::drmsngrhh::DRMANI;
 use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug)]
-struct Pdm {
+pub struct Pdm {
     rupm: String,
     mulm: String,
     drmani: u64,
+}
+
+pub fn drmani(p: &Pdm) -> Vec<&str> {
+    DRMANI
+        .iter()
+        .enumerate()
+        .filter(|&(i, _)| (1_u64 << i) & p.drmani != 0)
+        .map(|(_, &d)| d)
+        .collect::<Vec<&str>>()
 }
 
 impl Display for Pdm {
@@ -16,13 +25,7 @@ impl Display for Pdm {
             "{}({}{})",
             self.rupm,
             self.mulm,
-            DRMANI
-                .iter()
-                .enumerate()
-                .filter(|&(i, _)| (1_u64 << i) & self.drmani != 0)
-                .map(|(_, &d)| d)
-                .collect::<Vec<&str>>()
-                .join(" ")
+            drmani(self).join(" ")
         )
     }
 }
