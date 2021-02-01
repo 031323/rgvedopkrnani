@@ -4,8 +4,8 @@ use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug)]
 pub struct Pdm {
-    rupm: String,
-    mulm: String,
+    pub rupm: String,
+    pub mulm: String,
     drmani: u64,
 }
 
@@ -32,8 +32,8 @@ impl Display for Pdm {
 
 #[derive(Debug)]
 pub struct Rc {
-    smhita: String,
-    crnani: Vec<Vec<Pdm>>,
+    pub smhita: String,
+    pub crnani: Vec<Vec<Pdm>>,
 }
 
 impl Display for Rc {
