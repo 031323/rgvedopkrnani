@@ -13,7 +13,7 @@ impl Display for Pdm {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(
             f,
-            "{}({}, {})",
+            "{}({}{})",
             self.rupm,
             self.mulm,
             DRMANI
@@ -53,7 +53,7 @@ impl Display for Rc {
 }
 
 pub fn aropnm(c_salt_dir: &str) -> Vec<Vec<Vec<Rc>>> {
-    (1..11)
+    (2..3)
         .map(|m| {
             let snkyah = [
                 "prathamám",
@@ -67,7 +67,7 @@ pub fn aropnm(c_salt_dir: &str) -> Vec<Vec<Vec<Rc>>> {
                 "navamám",
                 "daśamám",
             ];
-            println!("{} máṇdalam ā́ropyate.", snkyah[m - 1]);
+            println!("{} máṇḍalam ā́ropyate.", snkyah[m - 1]);
             roxmltree::Document::parse(
                 &std::fs::read_to_string(format!("{}rv_book_{:0>2}.tei", c_salt_dir, m)).unwrap(),
             )
@@ -110,7 +110,7 @@ pub fn aropnm(c_salt_dir: &str) -> Vec<Vec<Vec<Rc>>> {
                             .filter(|&(i, _)| i % 2 == 1)
                             .map(|(_, c)| {
                                 c.descendants()
-                                    .filter(|d| d.has_tag_name("fs") && d.ancestors().count() == 10)
+                                    .filter(|d| d.has_tag_name("fs") && d.has_attribute("n"))
                                     .map(|p| {
                                         let rupm = p
                                             .descendants()
