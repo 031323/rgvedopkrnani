@@ -1,11 +1,40 @@
 use std::env;
 use vedaweb;
 
+
+fn main() {
+    let args: Vec<_> = env::args().collect();
+    if args.len() != 2 {
+        println!("c-salt_vedaweb_tei ítyasyá sthā́nam ápekṣyate.");
+        std::process::exit(0);
+    }
+    
+    let mndlani = vedaweb::aropnm(&args[1]);
+    
+    // अ॒भ्य॑स्तो॒ यत्र॒ सस्व॑रः -
+    
+    for m in mndlani {
+        for s in m {
+            for r in s {
+                for c in &r.crnani {
+                    for i in 0..(c.len()-1) {
+                        if c[i].rupm == c[i+1].rupm {
+                            println!("{}", c[i].rupm);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+/*
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 
 #[get("/{path}")]
-async fn hello(data: web::Data<Vec<Vec<Vec<vedaweb::Rc>>>>, path: web::Path<String>) -> impl Responder {
-    fn lekh(r: &vedaweb::Rc) -> String {
+async fn hello(data: web::Data<Vec<Vec<Vec<vedaweb::Rk>>>>, path: web::Path<String>) -> impl Responder {
+    fn lekh(r: &vedaweb::Rk) -> String {
         format!("<p>{}</p><p>{}</p>", r.smhita.replace("\n", "<br>"), r.crnani.iter().map(|c| { c
             .iter()
             .map(|p| format!("<b>{}</b>", p.rupm))
@@ -37,4 +66,4 @@ async fn main() -> std::io::Result<()> {
     .bind("127.0.0.1:8080")?
     .run()
     .await
-}
+}*/

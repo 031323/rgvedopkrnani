@@ -31,12 +31,12 @@ impl Display for Pdm {
 }
 
 #[derive(Debug)]
-pub struct Rc {
+pub struct Rk {
     pub smhita: String,
     pub crnani: Vec<Vec<Pdm>>,
 }
 
-impl Display for Rc {
+impl Display for Rk {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(
             f,
@@ -55,8 +55,8 @@ impl Display for Rc {
     }
 }
 
-pub fn aropnm(c_salt_dir: &str) -> Vec<Vec<Vec<Rc>>> {
-    (2..3)
+pub fn aropnm(c_salt_dir: &str) -> Vec<Vec<Vec<Rk>>> {
+    (1..11)
         .map(|m| {
             let snkyah = [
                 "prathamám",
@@ -80,7 +80,7 @@ pub fn aropnm(c_salt_dir: &str) -> Vec<Vec<Vec<Rc>>> {
             .map(|s| {
                 s.descendants()
                     .filter(|d| d.attribute("type") == Some("stanza"))
-                    .map(|r| Rc {
+                    .map(|r| Rk {
                         smhita: match r
                             .descendants()
                             .find(|d| d.attribute("source") == Some("vnh"))
@@ -113,7 +113,7 @@ pub fn aropnm(c_salt_dir: &str) -> Vec<Vec<Vec<Rc>>> {
                             .filter(|&(i, _)| i % 2 == 1)
                             .map(|(_, c)| {
                                 c.descendants()
-                                    .filter(|d| d.has_tag_name("fs") && d.has_attribute("n"))
+                                    .filter(|d| d.has_tag_name("fs") && d.attribute("type") == Some("zurich_info"))
                                     .map(|p| {
                                         let rupm = p
                                             .descendants()
