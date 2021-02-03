@@ -1,8 +1,10 @@
 mod drmsngrhh;
 use crate::drmsngrhh::DRMANI;
 use std::fmt::{self, Display, Formatter};
+use std::io::{Read, Write};
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct Pdm {
     pub rupm: String,
     pub mulm: String,
@@ -30,11 +32,14 @@ impl Display for Pdm {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct Rk {
     pub smhita: String,
     pub crnani: Vec<Vec<Pdm>>,
 }
+
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
+pub struct Rgvedh(pub Vec<Vec<Vec<Rk>>>);
 
 impl Display for Rk {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
@@ -55,8 +60,18 @@ impl Display for Rk {
     }
 }
 
-pub fn aropnm(c_salt_dir: &str) -> Vec<Vec<Vec<Rk>>> {
-    (1..11)
+pub fn aropnm(c_salt_dir: &str) -> Result<Rgvedh, std::io::Error>  {
+    fn bincode() -> Result<Rgvedh, std::io::Error> {
+        let mut file = std::fs::File::open("rgvedh_bincode")?;
+        let mut buffer = Vec::<u8>::new();
+        file.read_to_end(&mut buffer)?;
+        Ok(Rgvedh(bincode::deserialize(&buffer[..]).unwrap()))
+    }
+    match bincode() {
+        Ok(R) => Ok(R),
+        Err(E) => {
+        
+        let R = Rgvedh((1..11)
         .map(|m| {
             let snkyah = [
                 "prathamám",
@@ -161,5 +176,12 @@ pub fn aropnm(c_salt_dir: &str) -> Vec<Vec<Vec<Rk>>> {
             })
             .collect()
         })
-        .collect()
+        .collect());
+        
+        let mut file = std::fs::File::create("rgvedh_bincode")?;
+        file.write_all(&bincode::serialize(&R).unwrap())?;
+        Ok(R)
+        
+        },
+        }
 }
