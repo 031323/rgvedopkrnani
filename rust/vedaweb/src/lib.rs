@@ -11,13 +11,22 @@ pub struct Pdm {
     drmani: u64,
 }
 
-pub fn drmani(p: &Pdm) -> Vec<&str> {
+pub fn drmnamani(p: &Pdm) -> Vec<&str> {
     DRMANI
         .iter()
         .enumerate()
         .filter(|&(i, _)| (1_u64 << i) & p.drmani != 0)
         .map(|(_, &d)| d)
         .collect::<Vec<&str>>()
+}
+
+pub fn pdbedh(p: &Pdm) -> String {
+    for b in ["nominal stem", "root", "invariable", "pronoun"].iter() {
+        for d in drmnamani(p) {
+            if b.to_string() == d.to_string() { return b.to_string(); }
+        }
+    }
+    "".to_string()
 }
 
 impl Display for Pdm {
@@ -27,13 +36,14 @@ impl Display for Pdm {
             "{}({}{})",
             self.rupm,
             self.mulm,
-            drmani(self).join(" ")
+            drmnamani(self).join(" ")
         )
     }
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct Rk {
+    pub strata: String,
     pub smhita: String,
     pub crnani: Vec<Vec<Pdm>>,
 }
@@ -96,6 +106,8 @@ pub fn aropnm(c_salt_dir: &str) -> Result<Rgvedh, std::io::Error>  {
                 s.descendants()
                     .filter(|d| d.attribute("type") == Some("stanza"))
                     .map(|r| Rk {
+                        strata: r.descendants().find(|d| d.has_tag_name("f") && d.attribute("name")==Some("strata"))
+                            .unwrap().text().unwrap().to_string(),
                         smhita: match r
                             .descendants()
                             .find(|d| d.attribute("source") == Some("vnh"))
