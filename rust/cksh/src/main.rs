@@ -24,7 +24,7 @@ async fn hello(data: web::Data<Vec<Vec<Vec<vedaweb::Rk>>>>, path: web::Path<Stri
     let s = path.into_inner();
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(format!("<title>वे॒द॒च॒क्षः</title><style>a {{ color: blue; text-decoration: none; }}</style>{}", data.iter().flatten().flatten().filter(|r| r.strata == "A".to_string() && r.crnani.iter().any(|c| {
+        .body(format!("<title>वे॒द॒च॒क्षः</title><style>body {{font-family: sans-serif}} a {{ color: blue; text-decoration: none; }}</style>{}", data.iter().flatten().flatten().filter(|r| r.strata == "A".to_string() && r.crnani.iter().any(|c| {
             c.iter().any(|p| p.mulm == s)
         })).map(|r| lekh(&r, &s)).collect::<Vec<String>>().join("\n\n")))
 }
@@ -38,6 +38,29 @@ async fn main() -> std::io::Result<()> {
     }
     
     let mndlani = web::Data::new(vedaweb::aropnm(&args[1]).unwrap().0);
+    
+    let (pdmulani, mulsnkya, mulavrttyh) = {
+        let mut pdmulani: Vec<String> = Vec::new();
+        let mut mulavrttyh: Vec<u32> = Vec::new();
+        let mut mulsnkya = 0;
+        
+        for r in mndlani.iter().flatten().flatten() {
+            for p in r.crnani.iter().flatten() {
+                let m = String::from(&p.mulm);
+                mulsnkya += 1;
+                match pdmulani.binary_search(&m) {
+                    Ok(pos) => {mulavrttyh[pos] += 1;},
+                    Err(pos) => {pdmulani.insert(pos, m); mulavrttyh.insert(pos, 0);},
+                }
+            }
+        }
+        (pdmulani, mulsnkya, mulavrttyh)
+    };
+    
+    
+    
+    let covariance:Vec<Vec<f64>> = [0..pdmulani.len()].iter().map(|p| [0..pdmulani.len()].iter().map(|q| mndlani.iter().flatten().flatten().fold(0_f64, |c, r| { let (ps,qs,ss)=r.crnani.iter().flatten().fold((0, 0, 0) |(ps1,qs1,ss1), pdm| {let m = pdm.mulm; (ps1+if pdmulani[p]==m {1} else {0}, qs1+if pdmulani[q]==m {1} else 0, ss1+1)} ); c + ({ps as f64} /{ ss as f64 }- {mulavrttyh[p] as f64} / {mulsnkya as f64})*({qs as f64} / {ss as f64} - {mulavrttyh[q] as f64 }/{ mulsnkya as f64})} )) );
+    
  /*
  		for m in mndlani.iter() {
 		for s in m {
