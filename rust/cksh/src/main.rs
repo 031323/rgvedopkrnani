@@ -3,7 +3,7 @@ use vedaweb;
 
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 
-const DN: &str = "127.0.0.1:8080";
+const DN: &str = "0.0.0.0:8000";
 
 struct Data {
     r: Vec<Vec<Vec<vedaweb::Rk>>>,
@@ -51,23 +51,69 @@ async fn hello(data: web::Data<Data>, path: web::Path<String>) -> impl Responder
                 .join("<br>")
         )
     }
-    let s = path.into_inner();
-    let mut pos:usize = 0;
+    let mulm = path.into_inner();
+    let mut pos: usize = 0;
     for (i, m) in data.p.iter().enumerate() {
-        if *m == s {
+        if *m == mulm {
             pos = i;
             break;
         }
     }
+
+    let head = "
+
+        <title>वे॒द॒च॒क्षः</title>
+
+        <style>
+            body { font-family: sans-serif; }
+            a    { color: blue; text-decoration: none; }
+        </style>
+
+    ";
+
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(format!("<title>वे॒द॒च॒क्षः</title><style>body {{font-family: sans-serif}} a {{ color: blue; text-decoration: none; }}</style>{}<br><br>{}", {
-                let mut v = vec![(0); 10];
-                for data.c[pos].iter().enumerate()
+        .body(format!(
+            "{}
+            <p><b>{}</b> {}</p>
+            {}",
+            head,
+            &mulm,
+            {
+                let mut v: Vec<usize> = (0..data.p.len())
+                    .filter(|i| *i != pos && data.c[pos][*i] > 0)
+                    .collect();
+                v.sort_by_key(|i| -data.c[pos][*i]);
                 v
-            }.map(|i| data.p[i]).collect::<Vec<String>>().join(" "),  data.r.iter().flatten().flatten().filter(|r| r.strata == "A".to_string() && r.crnani.iter().any(|c| {
-            c.iter().any(|p| p.mulm == s)
-        })).map(|r| lekh(&r, &s)).collect::<Vec<String>>().join("\n\n")))
+            }
+            .iter()
+            .take(10)
+            .map(|i| String::from(&data.p[*i]))
+            .collect::<Vec<String>>()
+            .join(" "),
+            data.r
+                .iter()
+                .enumerate()
+                .map(|(mi, m)| {
+                    let mulm = &mulm;
+                    m.iter().enumerate().map(move |(si, s)| {
+                        s.iter()
+                            .filter(|r| {
+                                r.strata == "A".to_string()
+                                    && r.crnani
+                                        .iter()
+                                        .any(|c| c.iter().any(|p| p.mulm == String::from(mulm)))
+                            })
+                            .enumerate()
+                            .map(|(ri, r)| format!("{}.{}.{}", mi+1, si+1, ri+1) + &lekh(&r, mulm))
+                            .collect::<Vec<String>>()
+                    })
+                })
+                .flatten()
+                .flatten()
+                .collect::<Vec<String>>()
+                .join("")
+        ))
 }
 
 #[actix_web::main]
@@ -80,10 +126,7 @@ async fn main() -> std::io::Result<()> {
 
     let mndlani = vedaweb::aropnm(&args[1]).unwrap().0;
 
-    let rksnkya = mndlani
-        .iter()
-        .flatten()
-        .flatten().count() as i32;
+    let rksnkya = mndlani.iter().flatten().flatten().count() as i32;
 
     println!("abc");
 
@@ -93,7 +136,12 @@ async fn main() -> std::io::Result<()> {
 
         for r in mndlani.iter().flatten().flatten() {
             let v = {
-                let mut v: Vec<String> = r.crnani.iter().flatten().map(|pdm| String::from(&pdm.mulm)).collect();
+                let mut v: Vec<String> = r
+                    .crnani
+                    .iter()
+                    .flatten()
+                    .map(|pdm| String::from(&pdm.mulm))
+                    .collect();
                 v.sort();
                 v.dedup();
                 v
@@ -114,11 +162,12 @@ async fn main() -> std::io::Result<()> {
         (pdmulani, pdrgyogh)
     };
 
-
     println!("def");
 
     let covariance = {
-        let mut sngh: Vec<Vec<i32>> = (0..pdmulani.len()).map(|_| vec![0; pdmulani.len()]).collect();
+        let mut sngh: Vec<Vec<i32>> = (0..pdmulani.len())
+            .map(|_| vec![0; pdmulani.len()])
+            .collect();
         let mut num = 0;
         let count = mndlani.iter().flatten().flatten().count();
         for r in mndlani.iter().flatten().flatten() {
@@ -135,65 +184,31 @@ async fn main() -> std::io::Result<()> {
                 rnmulani.dedup();
                 rnmulani
             };
-            for (i, p) in rnmulani.iter().enumerate() {
-                for (j, q) in rnmulani.iter().enumerate() {
-                    if i > j {
-                        break;
-                    }
-                    let pi = pdmulani.binary_search(p).unwrap();
-                    let qi = pdmulani.binary_search(q).unwrap();
-
+            for (i, pi) in rnmulani
+                .iter()
+                .map(|m| pdmulani.binary_search(&m).unwrap())
+                .enumerate()
+            {
+                sngh[pi][pi] += 1;
+                for qi in rnmulani
+                    .iter()
+                    .enumerate()
+                    .filter(|(j, _)| j < &i)
+                    .map(|(_, m)| pdmulani.binary_search(&m).unwrap())
+                {
                     sngh[pi][qi] += 1;
                     sngh[qi][pi] += 1;
                 }
             }
         }
-        (0..pdmulani.len()).map(|i| (0..pdmulani.len()).map(|j| rksnkya * sngh[i][j] - pdrgyogh[i]*pdrgyogh[j]).collect()).collect()
+        for i in 0..pdmulani.len() {
+            for j in 0..pdmulani.len() {
+                sngh[i][j] = rksnkya * sngh[i][j] - pdrgyogh[i] * pdrgyogh[j];
+            }
+        }
+        sngh
     };
-    /*
-        let covariance: Vec<Vec<f64>> = pdmulani
-            .iter()
-            .enumerate()
-            .map(|(p, pm)| {
-                println!("{} {}/{}", pm, p, pdmulani.len());
-                pdmulani
-                    .iter()
-                    .enumerate()
-                    .filter(|(q, _)| q > &p)
-                    .map(|(q, qm)| {
-                        println!("{} {}/{}", qm, q, pdmulani.len());
-                        mndlani.iter().flatten().flatten().fold(0_f64, |c, r| {
-                            let (ps, qs, ss) =
-                                r.crnani
-                                    .iter()
-                                    .flatten()
-                                    .fold((0, 0, 0), |(ps1, qs1, ss1), pdm| {
 
-                                        if *pm == pdm.mulm {
-                                            (ps1+1, qs1, ss1)
-                                        }
-                                        else if *qm == pdm.mulm {
-                                            (ps1, qs1+1, ss1)
-                                        }
-                                        else {
-                                            (ps1, qs1, ss1+1)
-                                        }
-                                        /*
-                                        (
-                                            ps1 + if *pm == *m { 1 } else { 0 },
-                                            qs1 + if *qm == *m { 1 } else { 0 },
-                                            ss1 + 1,
-                                        )*/
-                                    });
-                            let ss2 = ss + ps + qs;
-                            c + ({ ps as f64 } / { ss2 as f64 } - mulavrttyh[p])
-                                * ({ qs as f64 } / { ss2 as f64 } - mulavrttyh[q])
-                        })
-                    })
-                    .collect()
-            })
-            .collect();
-    */
     println!("...");
 
     let data = web::Data::new(Data {
@@ -201,23 +216,6 @@ async fn main() -> std::io::Result<()> {
         c: covariance,
         p: pdmulani,
     });
-
-    /*
-         for m in mndlani.iter() {
-        for s in m {
-        for r in s {
-            for c in &r.crnani {
-                for p in c {
-                    let ds = vedaweb::drmnamani(&p);
-                    if ["nominal stem", "root", "invariable", "pronoun"].iter().fold(0, |n, t| n + if ds.iter().any(|d| d.to_string() == t.to_string()) {1} else { 0 }) > 1 {
-                    //if ds.iter().any(|d| d.to_string()=="1") && ds.iter().any(|d| d.to_string()=="2") {
-                        println!("{}", &p);
-                    }
-                }
-            }
-        }
-    }
-    }*/
 
     HttpServer::new(move || App::new().app_data(data.clone()).service(hello))
         .bind(DN)?
