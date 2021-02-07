@@ -7,7 +7,7 @@ const DN: &str = "127.0.0.1:8080";
 
 struct Data {
     r: Vec<Vec<Vec<vedaweb::Rk>>>,
-    c: Vec<Vec<f64>>,
+    c: Vec<Vec<i32>>,
     p: Vec<String>,
 }
 
@@ -52,12 +52,20 @@ async fn hello(data: web::Data<Data>, path: web::Path<String>) -> impl Responder
         )
     }
     let s = path.into_inner();
-    for m in &data.p {
-        println!("{}", m);
+    let mut pos:usize = 0;
+    for (i, m) in data.p.iter().enumerate() {
+        if *m == s {
+            pos = i;
+            break;
+        }
     }
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(format!("<title>वे॒द॒च॒क्षः</title><style>body {{font-family: sans-serif}} a {{ color: blue; text-decoration: none; }}</style>{}<br><br>{}", data.p[data.c[data.p.iter().position(|m| *m == s).unwrap()].iter().enumerate().fold((0, 0_f64), |(i1, f1), (i, &f)| if f > f1 {(i, f)} else {(i1, f1)}).0],  data.r.iter().flatten().flatten().filter(|r| r.strata == "A".to_string() && r.crnani.iter().any(|c| {
+        .body(format!("<title>वे॒द॒च॒क्षः</title><style>body {{font-family: sans-serif}} a {{ color: blue; text-decoration: none; }}</style>{}<br><br>{}", {
+                let mut v = vec![(0); 10];
+                for data.c[pos].iter().enumerate()
+                v
+            }.map(|i| data.p[i]).collect::<Vec<String>>().join(" "),  data.r.iter().flatten().flatten().filter(|r| r.strata == "A".to_string() && r.crnani.iter().any(|c| {
             c.iter().any(|p| p.mulm == s)
         })).map(|r| lekh(&r, &s)).collect::<Vec<String>>().join("\n\n")))
 }
@@ -72,41 +80,45 @@ async fn main() -> std::io::Result<()> {
 
     let mndlani = vedaweb::aropnm(&args[1]).unwrap().0;
 
-    let mulsnkya = mndlani
+    let rksnkya = mndlani
         .iter()
         .flatten()
-        .flatten()
-        .fold(0, |n, r| n + r.crnani.iter().flatten().count());
+        .flatten().count() as i32;
 
     println!("abc");
 
-    let (pdmulani, mulavrttyh) = {
+    let (pdmulani, pdrgyogh) = {
         let mut pdmulani: Vec<String> = Vec::new();
-        let mut mulavrttyh: Vec<f64> = Vec::new();
-        let ekbagh = 1_f64 / { mulsnkya as f64 };
+        let mut pdrgyogh: Vec<i32> = Vec::new();
 
         for r in mndlani.iter().flatten().flatten() {
-            for p in r.crnani.iter().flatten() {
-                let m = String::from(&p.mulm);
+            let v = {
+                let mut v: Vec<String> = r.crnani.iter().flatten().map(|pdm| String::from(&pdm.mulm)).collect();
+                v.sort();
+                v.dedup();
+                v
+            };
+
+            for m in v {
                 match pdmulani.binary_search(&m) {
                     Ok(pos) => {
-                        mulavrttyh[pos] += ekbagh;
+                        pdrgyogh[pos] += 1;
                     }
                     Err(pos) => {
                         pdmulani.insert(pos, m);
-                        mulavrttyh.insert(pos, ekbagh);
+                        pdrgyogh.insert(pos, 1);
                     }
                 }
             }
         }
-        (pdmulani, mulavrttyh)
+        (pdmulani, pdrgyogh)
     };
 
 
     println!("def");
 
     let covariance = {
-        let mut covariance: Vec<Vec<f64>> = (0..pdmulani.len()).map(|_| vec![0.0; pdmulani.len()]).collect();
+        let mut sngh: Vec<Vec<i32>> = (0..pdmulani.len()).map(|_| vec![0; pdmulani.len()]).collect();
         let mut num = 0;
         let count = mndlani.iter().flatten().flatten().count();
         for r in mndlani.iter().flatten().flatten() {
@@ -130,28 +142,13 @@ async fn main() -> std::io::Result<()> {
                     }
                     let pi = pdmulani.binary_search(p).unwrap();
                     let qi = pdmulani.binary_search(q).unwrap();
-                    let sc = r.crnani.iter().flatten().count() as f64;
-                    let vrddih = (r
-                        .crnani
-                        .iter()
-                        .flatten()
-                        .filter(|pdm| pdm.mulm == *p)
-                        .count() as f64
-                        / sc
-                        - mulavrttyh[pi])
-                        * (r.crnani
-                            .iter()
-                            .flatten()
-                            .filter(|pdm| pdm.mulm == *q)
-                            .count() as f64
-                            / sc
-                            - mulavrttyh[qi]);
-                    covariance[pi][qi] += vrddih;
-                    covariance[qi][pi] += vrddih;
+
+                    sngh[pi][qi] += 1;
+                    sngh[qi][pi] += 1;
                 }
             }
         }
-        covariance
+        (0..pdmulani.len()).map(|i| (0..pdmulani.len()).map(|j| rksnkya * sngh[i][j] - pdrgyogh[i]*pdrgyogh[j]).collect()).collect()
     };
     /*
         let covariance: Vec<Vec<f64>> = pdmulani
