@@ -86,7 +86,7 @@ async fn hello(data: web::Data<Data>, path: web::Path<String>) -> impl Responder
                     let t = (0..data.p.len()).fold((0_i64, 0_i64), |(m1, mn1), j| (m1 + (data.c[i][j] as i64)*{data.c[i][j] as i64}, mn1 + (data.c[pos][j] as i64)*{data.c[i][j] as i64}));
                     t.1 as f32 / (t.0 as f32 * n).sqrt()
                 }).collect();
-                let mut v:Vec<usize> = (0..data.p.len()).filter(|&i| i != pos).collect();
+                let mut v:Vec<usize> = (0..data.p.len()).filter(|&i| i != pos && data.c[pos][i] < 0).collect();
                 //v.sort_by_key(|i| -data.c[pos][*i]);
                 v.sort_by(|i, j| cos[*j].partial_cmp(&cos[*i]).unwrap());
 
