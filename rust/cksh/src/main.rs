@@ -80,10 +80,18 @@ async fn hello(data: web::Data<Data>, path: web::Path<String>) -> impl Responder
             head,
             &mulm,
             {
+                let n = (0..data.p.len()).fold(0_u64, |n1, i| n1 + {data.c[pos][i]*data.c[pos][i]} as u64) as f64;
+                let cos:Vec<f32> = (0..data.p.len()).map(|i| {
+                    println!("{}/{}", i, data.p.len());
+                    let t = (0..data.p.len()).fold((0_u64, 0_u64), |(m1, mn1), j| (m1 + {data.c[i][j]*data.c[i][j]} as u64, mn1 + {data.c[pos][j]*data.c[i][j]} as u64));
+                    t.1 as f32 / (t.0 as f32 * n as f32).sqrt()
+                }).collect();
                 let mut v: Vec<usize> = (0..data.p.len())
                     .filter(|i| *i != pos && data.c[pos][*i] > 0)
                     .collect();
-                v.sort_by_key(|i| -data.c[pos][*i]);
+                //v.sort_by_key(|i| -data.c[pos][*i]);
+                v.sort_by(|i, j| cos[*j].partial_cmp(&cos[*i]).unwrap());
+
                 v
             }
             .iter()
