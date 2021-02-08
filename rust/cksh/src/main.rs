@@ -7,8 +7,10 @@ const DN: &str = "0.0.0.0:8000";
 
 struct Data {
     r: Vec<Vec<Vec<vedaweb::Rk>>>,
-    c: Vec<Vec<i32>>,
+    c: Vec<Vec<i64>>,
     p: Vec<String>,
+    y: Vec<i32>,
+    n: Vec<f32>,
 }
 
 #[get("/{path}")]
@@ -80,11 +82,12 @@ async fn hello(data: web::Data<Data>, path: web::Path<String>) -> impl Responder
             head,
             &mulm,
             {
-                let n = (0..data.p.len()).fold(0_i64, |n1, i| n1 + (data.c[pos][i] as i64)*{data.c[pos][i] as i64}) as f32;
+                let it:Vec<usize> = (0..data.p.len()).filter(|&i| data.y[i] > 1).collect();
+                let posj = &data.c[pos];
                 let cos:Vec<f32> = (0..data.p.len()).map(|i| {
-                    println!("{}/{}", i, data.p.len());
-                    let t = (0..data.p.len()).fold((0_i64, 0_i64), |(m1, mn1), j| (m1 + (data.c[i][j] as i64)*{data.c[i][j] as i64}, mn1 + (data.c[pos][j] as i64)*{data.c[i][j] as i64}));
-                    t.1 as f32 / (t.0 as f32 * n).sqrt()
+                    //println!("{}/{}", i, data.p.len());
+                    let ij = &data.c[i];
+                    it.iter().fold(0_i64, |mn1, j| mn1 + posj[*j]*ij[*j]) as f32 / data.n[i]
                 }).collect();
                 let mut v:Vec<usize> = (0..data.p.len()).filter(|&i| i != pos && data.c[pos][i] < 0).collect();
                 //v.sort_by_key(|i| -data.c[pos][*i]);
@@ -170,8 +173,8 @@ async fn main() -> std::io::Result<()> {
 
     println!("def");
 
-    let covariance = {
-        let mut sngh: Vec<Vec<i32>> = (0..pdmulani.len())
+    let (covariance, norm) = {
+        let mut sngh: Vec<Vec<i64>> = (0..pdmulani.len())
             .map(|_| vec![0; pdmulani.len()])
             .collect();
         let mut num = 0;
@@ -207,12 +210,16 @@ async fn main() -> std::io::Result<()> {
                 }
             }
         }
+        
+        let mut norm:Vec<f32> = Vec::new();
+        
         for i in 0..pdmulani.len() {
             for j in 0..pdmulani.len() {
-                sngh[i][j] = rksnkya * sngh[i][j] - pdrgyogh[i] * pdrgyogh[j];
+                sngh[i][j] = rksnkya as i64 * sngh[i][j] - (pdrgyogh[i] as i64) * (pdrgyogh[j] as i64);
             }
+            norm.push(((0..pdmulani.len()).fold(0_i64, |n1, j| n1 + sngh[i][j]*sngh[i][j]) as f32).sqrt());
         }
-        sngh
+        (sngh, norm)
     };
 
     println!("...");
@@ -221,6 +228,8 @@ async fn main() -> std::io::Result<()> {
         r: mndlani,
         c: covariance,
         p: pdmulani,
+        y: pdrgyogh,
+        n: norm,
     });
 
     HttpServer::new(move || App::new().app_data(data.clone()).service(hello))
