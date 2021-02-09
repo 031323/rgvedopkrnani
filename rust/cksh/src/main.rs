@@ -7,7 +7,8 @@ const DN: &str = "0.0.0.0:8000";
 
 struct Data {
     r: Vec<Vec<Vec<vedaweb::Rk>>>,
-    c: Vec<Vec<i64>>,
+    c: Vec<Vec<f32>>,
+    //Vec<Vec<i64>>,
     p: Vec<String>,
     y: Vec<i32>,
     n: Vec<f32>,
@@ -82,14 +83,15 @@ async fn hello(data: web::Data<Data>, path: web::Path<String>) -> impl Responder
             head,
             &mulm,
             {
-                let it:Vec<usize> = (0..data.p.len()).filter(|&i| data.y[i] > 1).collect();
+                let it:Vec<usize> = (0..data.c[0].len()).collect();
+                    //(0..data.p.len()).filter(|&i| data.y[i] > 1).collect();
                 let posj = &data.c[pos];
                 let cos:Vec<f32> = (0..data.p.len()).map(|i| {
                     //println!("{}/{}", i, data.p.len());
                     let ij = &data.c[i];
-                    it.iter().fold(0_i64, |mn1, j| mn1 + posj[*j]*ij[*j]) as f32 / data.n[i]
+                    it.iter().fold(0_f32, |mn1, j| mn1 as f32 + posj[*j]*ij[*j]) as f32 / data.n[i]
                 }).collect();
-                let mut v:Vec<usize> = (0..data.p.len()).filter(|&i| i != pos && data.c[pos][i] < 0).collect();
+                let mut v:Vec<usize> = (0..data.p.len()).filter(|&i| i != pos /*&& data.c[pos][i] < 0*/).collect();
                 //v.sort_by_key(|i| -data.c[pos][*i]);
                 v.sort_by(|i, j| cos[*j].partial_cmp(&cos[*i]).unwrap());
 
@@ -172,6 +174,21 @@ async fn main() -> std::io::Result<()> {
     };
 
     println!("def");
+		println!("pdmulsnkya {}", pdmulani.len());
+		
+		let vectors = {
+		    let mut vectortxt:Vec<Vec<String>> = std::fs::read_to_string("../../glove/vectors.txt").expect("?!").split("\n").map(|line| line.split(" ").map(|s| String::from(s)).collect()).collect();
+		    println!("\n{:?}\n", vectortxt.iter().find(|t| t[0]==String::from("abalá-")));
+		    vectortxt.sort_by_key(|l| String::from(&l[0]));
+		    println!("v len {}", vectortxt.len());
+        for v in vectortxt.iter().take(10) {
+            println!("{:?}", v);
+        }
+		    let vectors:Vec<Vec<f32>> = (0..pdmulani.len()).map(|i| vectortxt[i+2].iter().enumerate().filter(|(j, _)| *j>0_usize).map(|(_, f)| f.parse::<f32>().unwrap()).collect()).collect();
+		    vectors
+		};
+
+		println!("\n{:?}\n", vectors[0]);
 
     let (covariance, norm) = {
         let mut sngh: Vec<Vec<i64>> = (0..pdmulani.len())
@@ -181,7 +198,7 @@ async fn main() -> std::io::Result<()> {
         let count = mndlani.iter().flatten().flatten().count();
         for r in mndlani.iter().flatten().flatten() {
             num += 1;
-            println!("{}/{}", num, count);
+            //println!("{}/{}", num, count);
             let rnmulani = {
                 let mut rnmulani: Vec<String> = r
                     .crnani
@@ -217,9 +234,14 @@ async fn main() -> std::io::Result<()> {
             for j in 0..pdmulani.len() {
                 sngh[i][j] = rksnkya as i64 * sngh[i][j] - (pdrgyogh[i] as i64) * (pdrgyogh[j] as i64);
             }
-            norm.push(((0..pdmulani.len()).fold(0_i64, |n1, j| n1 + sngh[i][j]*sngh[i][j]) as f32).sqrt());
+            //////////////////// norm replace sngh>vector
+            let nn = ((0..vectors[0].len()).fold(0_f32, |n1, j| n1 + vectors[i][j]*vectors[i][j])).sqrt();
+            if nn==0.0 {
+                println!("\n0: {}\n", pdmulani[i]);
+            }
+            norm.push(nn);
         }
-        (sngh, norm)
+        (vectors, norm)
     };
 
     println!("...");

@@ -9,5 +9,5 @@ fn main() {
 
     let mndlani = vedaweb::aropnm(&args[1]).unwrap().0;
     
-    std::fs::write("../rvmulani", mndlani.iter().flatten().flatten().map(|r| r.crnani.iter().flatten().map(|p| String::from(&p.mulm).replace(" ", "").replace("-", "").replace("√","").replace("~", "")).collect::<Vec<String>>().join(" ")).collect::<Vec<String>>().join("\n")).expect("!?");
+    std::fs::write("../rvmulani", mndlani.iter().flatten().map(|s| s.iter().fold(String::from(""), |s, r| s + " " + &r.crnani.iter().flatten().map(|p| String::from(&p.mulm).replace(" ", "")).collect::<Vec<String>>().join(" "))).collect::<Vec<String>>().join("\n")).expect("!?");
 }
