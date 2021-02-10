@@ -2,8 +2,16 @@ use std::env;
 use vedaweb;
 
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use serde::Deserialize;
+
+#[derive(Deserialize)]
+pub struct Anuyogh {
+   istm: Option<String>,
+   krmh: Option<String>,
+}
 
 const DN: &str = "0.0.0.0:8000";
+const VB: &str = "https://vedaweb.uni-koeln.de/rigveda/view/id/";
 
 struct Data {
     r: Vec<Vec<Vec<vedaweb::Rk>>>,
@@ -14,17 +22,10 @@ struct Data {
     n: Vec<f32>,
 }
 
-#[get("/{path}")]
-async fn hello(data: web::Data<Data>, path: web::Path<String>) -> impl Responder {
-    fn gurucet(b: bool, s: &str, h: &str) -> String {
-        if b {
-            format!("<span style='color:blue'><b>{}</b></span>", s)
-        } else {
-            format!("<a href=\"{}\">{}</a>", h, s)
-        }
-    }
+async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> impl Responder {
+    
 
-    fn lekh(r: &vedaweb::Rk, mulm: &str) -> String {
+    let lekh = |r: &vedaweb::Rk, istm: &Option<String>| -> String {
         format!(
             "<p>{}</p><p>{}</p>",
             r.smhita.replace("\n", "<br>"),
@@ -35,7 +36,16 @@ async fn hello(data: web::Data<Data>, path: web::Path<String>) -> impl Responder
                         .map(|p| {
                             format!(
                                 "{}<sub> {} <span style='font-family: serif'>{}</span></sub>",
-                                gurucet(p.mulm == mulm, &p.rupm, &p.mulm),
+                                
+                                if match istm {Some(pdm) => p.mulm == String::from(pdm), None => false,} {
+            format!("<span style='color:blue'><b>{}</b></span>", &p.rupm)
+        } else {
+            format!("<a href=\"?{}istm={}\">{}</a>", match &info.krmh {
+                Some(krmh) => format!("krmh={}&", krmh),
+                None => String::from(""),
+            }, &p.mulm, &p.rupm)
+        }
+                      ,
                                 p.mulm,
                                 vedaweb::drmnamani(&p)
                                     .iter()
@@ -53,15 +63,9 @@ async fn hello(data: web::Data<Data>, path: web::Path<String>) -> impl Responder
                 .collect::<Vec<String>>()
                 .join("<br>")
         )
-    }
-    let mulm = path.into_inner();
-    let mut pos: usize = 0;
-    for (i, m) in data.p.iter().enumerate() {
-        if *m == mulm {
-            pos = i;
-            break;
-        }
-    }
+    };
+    
+    
 
     let head = "
 
@@ -77,12 +81,17 @@ async fn hello(data: web::Data<Data>, path: web::Path<String>) -> impl Responder
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
         .body(format!(
-            "{}
-            <p><b>{}</b> {}</p>
-            {}",
+            "{}{}{}",
             head,
-            &mulm,
-            {
+            match info.istm {
+                Some(ref istm) => format!("<p><b>{}</b> {}</p>", istm, {
+                let mut pos: usize = 0;
+                for (i, m) in data.p.iter().enumerate() {
+                   if *m == String::from(istm) {
+                       pos = i;
+                       break;
+                   }
+                }
                 let it:Vec<usize> = (0..data.c[0].len()).collect();
                     //(0..data.p.len()).filter(|&i| data.y[i] > 1).collect();
                 let posj = &data.c[pos];
@@ -101,29 +110,43 @@ async fn hello(data: web::Data<Data>, path: web::Path<String>) -> impl Responder
             .take(10)
             .map(|i| String::from(&data.p[*i]))
             .collect::<Vec<String>>()
-            .join(" "),
-            data.r
-                .iter()
-                .enumerate()
-                .map(|(mi, m)| {
-                    let mulm = &mulm;
-                    m.iter().enumerate().map(move |(si, s)| {
-                        s.iter()
-                            .filter(|r| {
-                                r.strata == "A".to_string()
-                                    && r.crnani
+            .join(" ")),
+            
+                None => String::from(""),
+            },
+            { 
+            
+            let sadarnkrmh: Vec<(usize, usize, usize)> = {
+                let mut v: Vec<(usize, usize, usize)> = Vec::new();
+                for mi in (0..data.r.len()) {
+                    for si in (0..data.r[mi].len()) {
+                        for ri in (0..data.r[mi][si].len()) {
+                            v.push((mi, si, ri));
+                        }
+                    }
+                }
+                v
+            };
+            
+            let iter: Vec<(usize, usize, usize)> = match info.krmh {
+                Some(ref krmh) => std::fs::read_to_string(String::from("../") + krmh).expect("krmh?!").split("\n").map(|l| {
+                        let s:Vec<&str> = l.split(".").collect();
+                        (s[0].parse::<usize>().unwrap()-1, s[1].parse::<usize>().unwrap()-1, s[2].parse::<usize>().unwrap()-1)
+                    }).collect::<Vec<(usize, usize, usize)>>(),
+                None => sadarnkrmh,
+            };
+            
+            iter.iter().map(|(mi, si, ri)| (mi, si, ri, &data.r[*mi][*si][*ri]))
+                       .filter(|(_, _, _, r)| match info.istm {
+                           Some(ref istm) => r.crnani
                                         .iter()
-                                        .any(|c| c.iter().any(|p| p.mulm == String::from(mulm)))
-                            })
-                            .enumerate()
-                            .map(|(ri, r)| format!("{}.{}.{}", mi+1, si+1, ri+1) + &lekh(&r, mulm))
-                            .collect::<Vec<String>>()
-                    })
-                })
-                .flatten()
-                .flatten()
-                .collect::<Vec<String>>()
-                .join("")
+                                        .any(|c| c.iter().any(|p| p.mulm == String::from(istm))),
+                           None => true,
+                        })
+                       .map(|(mi, si, ri, r)| format!("<a href='{}{1}.{2}.{3}'>{}.{}.{}</a>", VB, mi+1, si+1, ri+1) + &lekh(&r, &info.istm))
+                       .collect::<Vec<String>>()
+                       .join("")
+            }
         ))
 }
 
@@ -196,7 +219,7 @@ async fn main() -> std::io::Result<()> {
             .collect();
         let mut num = 0;
         let count = mndlani.iter().flatten().flatten().count();
-        for r in mndlani.iter().flatten().flatten() {
+        /*for r in mndlani.iter().flatten().flatten() {
             num += 1;
             //println!("{}/{}", num, count);
             let rnmulani = {
@@ -227,13 +250,13 @@ async fn main() -> std::io::Result<()> {
                 }
             }
         }
-        
+        */
         let mut norm:Vec<f32> = Vec::new();
         
         for i in 0..pdmulani.len() {
-            for j in 0..pdmulani.len() {
+            /*for j in 0..pdmulani.len() {
                 sngh[i][j] = rksnkya as i64 * sngh[i][j] - (pdrgyogh[i] as i64) * (pdrgyogh[j] as i64);
-            }
+            }*/
             //////////////////// norm replace sngh>vector
             let nn = ((0..vectors[0].len()).fold(0_f32, |n1, j| n1 + vectors[i][j]*vectors[i][j])).sqrt();
             if nn==0.0 {
@@ -254,7 +277,7 @@ async fn main() -> std::io::Result<()> {
         n: norm,
     });
 
-    HttpServer::new(move || App::new().app_data(data.clone()).service(hello))
+    HttpServer::new(move || App::new().app_data(data.clone()).service(web::resource("/").route(web::get().to(hello))))
         .bind(DN)?
         .run()
         .await

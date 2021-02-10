@@ -6,4 +6,5 @@ edition = "2018"
 
 [dependencies]
 actix-web = { version = "3.3.2", default-features = false }
+serde = "1.0.123"
 vedaweb = { path = "../vedaweb" }
