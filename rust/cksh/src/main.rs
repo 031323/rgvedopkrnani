@@ -6,8 +6,8 @@ use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct Anuyogh {
-   istm: Option<String>,
    krmh: Option<String>,
+   istm: Option<String>,
 }
 
 const DN: &str = "0.0.0.0:8000";
@@ -16,16 +16,20 @@ const VB: &str = "https://vedaweb.uni-koeln.de/rigveda/view/id/";
 struct Data {
     r: Vec<Vec<Vec<vedaweb::Rk>>>,
     c: Vec<Vec<f32>>,
-    //Vec<Vec<i64>>,
     p: Vec<String>,
-    y: Vec<i32>,
     n: Vec<f32>,
 }
 
 async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> impl Responder {
+    let nirdesh = |krmh: &Option<String>, istm: &Option<String>| -> String {
+        let f = |nam: &str, os: &Option<String>| match os {Some(s) => nam.to_string() + "=" + &s, None => String::new(),};
+        format!("?{}{}{}", f("krmh", krmh), if krmh.is_some() && istm.is_some() {"&"} else {""}, f("istm", istm))
+    };
     
+    let krmnirdesh = |krmh: &Option<String>| nirdesh(krmh, &info.istm);
+    let istnirdesh = |istm: &Option<String>| nirdesh(&info.krmh, istm);
 
-    let lekh = |r: &vedaweb::Rk, istm: &Option<String>| -> String {
+    let lekh = |r: &vedaweb::Rk| -> String {
         format!(
             "<p>{}</p><p>{}</p>",
             r.smhita.replace("\n", "<br>"),
@@ -36,23 +40,17 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
                         .map(|p| {
                             format!(
                                 "{}<sub> {} <span style='font-family: serif'>{}</span></sub>",
-                                
-                                if match istm {Some(pdm) => p.mulm == String::from(pdm), None => false,} {
-            format!("<span style='color:blue'><b>{}</b></span>", &p.rupm)
-        } else {
-            format!("<a href=\"?{}istm={}\">{}</a>", match &info.krmh {
-                Some(krmh) => format!("krmh={}&", krmh),
-                None => String::from(""),
-            }, &p.mulm, &p.rupm)
-        }
-                      ,
+                                match &info.istm {
+                                    Some(pdm) if p.mulm == String::from(pdm) => format!("<span class='b'>{}</span>", &p.rupm),
+                                    _ => format!("<a href='{}'>{}</a>", istnirdesh(&Some(String::from(&p.mulm))), &p.rupm),
+                                },
                                 p.mulm,
                                 vedaweb::drmnamani(&p)
                                     .iter()
                                     .map(|d| d.to_string())
                                     .filter(|d| !["nominal stem", "root", "invariable", "pronoun"]
                                         .iter()
-                                        .any(|t| t.to_string() == d.to_string()))
+                                        .any(|t| t.to_string() == *d))
                                     .collect::<Vec<String>>()
                                     .join(" ")
                             )
@@ -74,6 +72,7 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
         <style>
             body { font-family: sans-serif; }
             a    { color: blue; text-decoration: none; }
+            .b   { color: blue; font-weight: bold; }
         </style>
 
     ";
@@ -81,27 +80,35 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
         .body(format!(
-            "{}{}{}",
+            "{}<p>{}</p>{}{}",
             head,
+            match &info.krmh {
+                Some(krmh) => format!("<a href='{}'>X</a> ", krmnirdesh(&None)),
+                None => String::new(),
+            } +
+            
+            &std::fs::read_dir("../").unwrap()
+                .map(|entry| entry.unwrap())
+                .filter(|entry| entry.path().is_file())
+                .map(|entry| entry.file_name().into_string().unwrap())
+                .filter(|n| n.ends_with(".krmh"))
+                .map(|n| {
+                    let nam = std::fs::read_to_string(String::from("../") + &n).unwrap().split("\n").collect::<Vec<&str>>()[0].to_string();
+                    match &info.krmh {
+                        Some(krmh) if n == krmh.to_string() => nam,
+                        _ => format!("<a href='{}'>{}</a>", krmnirdesh(&Some(n)), nam)
+                    }
+                }).collect::<Vec<String>>().join(" | "),
             match info.istm {
-                Some(ref istm) => format!("<p><b>{}</b> {}</p>", istm, {
-                let mut pos: usize = 0;
-                for (i, m) in data.p.iter().enumerate() {
-                   if *m == String::from(istm) {
-                       pos = i;
-                       break;
-                   }
-                }
+                Some(ref istm) => format!("<p><a href='{}'>X</a> <b>{}</b> {}</p>", istnirdesh(&None), istm, {
+                let pos = data.p.binary_search(&istm.to_string()).unwrap();
                 let it:Vec<usize> = (0..data.c[0].len()).collect();
-                    //(0..data.p.len()).filter(|&i| data.y[i] > 1).collect();
                 let posj = &data.c[pos];
                 let cos:Vec<f32> = (0..data.p.len()).map(|i| {
-                    //println!("{}/{}", i, data.p.len());
                     let ij = &data.c[i];
                     it.iter().fold(0_f32, |mn1, j| mn1 as f32 + posj[*j]*ij[*j]) as f32 / data.n[i]
                 }).collect();
-                let mut v:Vec<usize> = (0..data.p.len()).filter(|&i| i != pos /*&& data.c[pos][i] < 0*/).collect();
-                //v.sort_by_key(|i| -data.c[pos][*i]);
+                let mut v:Vec<usize> = (0..data.p.len()).filter(|&i| i != pos).collect();
                 v.sort_by(|i, j| cos[*j].partial_cmp(&cos[*i]).unwrap());
 
                 v
@@ -111,12 +118,11 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
             .map(|i| String::from(&data.p[*i]))
             .collect::<Vec<String>>()
             .join(" ")),
-            
-                None => String::from(""),
+                None => String::new(),
             },
             { 
             
-            let sadarnkrmh: Vec<(usize, usize, usize)> = {
+            let sadarnkrmh = {
                 let mut v: Vec<(usize, usize, usize)> = Vec::new();
                 for mi in (0..data.r.len()) {
                     for si in (0..data.r[mi].len()) {
@@ -129,9 +135,10 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
             };
             
             let iter: Vec<(usize, usize, usize)> = match info.krmh {
-                Some(ref krmh) => std::fs::read_to_string(String::from("../") + krmh).expect("krmh?!").split("\n").map(|l| {
+                Some(ref krmh) => std::fs::read_to_string(String::from("../") + krmh).expect("krmh?!").split("\n").enumerate().filter(|(i, _)| *i > 0).map(|(_, l)| {
                         let s:Vec<&str> = l.split(".").collect();
-                        (s[0].parse::<usize>().unwrap()-1, s[1].parse::<usize>().unwrap()-1, s[2].parse::<usize>().unwrap()-1)
+                        let f = |i: usize| s[i].parse::<usize>().unwrap() - 1;
+                        (f(0), f(1), f(2))
                     }).collect::<Vec<(usize, usize, usize)>>(),
                 None => sadarnkrmh,
             };
@@ -143,7 +150,7 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
                                         .any(|c| c.iter().any(|p| p.mulm == String::from(istm))),
                            None => true,
                         })
-                       .map(|(mi, si, ri, r)| format!("<a href='{}{1}.{2}.{3}'>{}.{}.{}</a>", VB, mi+1, si+1, ri+1) + &lekh(&r, &info.istm))
+                       .map(|(mi, si, ri, r)| format!("<a href='{}{1}.{2}.{3}'>{}.{}.{}</a>", VB, mi+1, si+1, ri+1) + &lekh(&r))
                        .collect::<Vec<String>>()
                        .join("")
             }
@@ -200,18 +207,20 @@ async fn main() -> std::io::Result<()> {
 		println!("pdmulsnkya {}", pdmulani.len());
 		
 		let vectors = {
-		    let mut vectortxt:Vec<Vec<String>> = std::fs::read_to_string("../../glove/vectors.txt").expect("?!").split("\n").map(|line| line.split(" ").map(|s| String::from(s)).collect()).collect();
-		    println!("\n{:?}\n", vectortxt.iter().find(|t| t[0]==String::from("abalá-")));
-		    vectortxt.sort_by_key(|l| String::from(&l[0]));
-		    println!("v len {}", vectortxt.len());
-        for v in vectortxt.iter().take(10) {
-            println!("{:?}", v);
-        }
-		    let vectors:Vec<Vec<f32>> = (0..pdmulani.len()).map(|i| vectortxt[i+2].iter().enumerate().filter(|(j, _)| *j>0_usize).map(|(_, f)| f.parse::<f32>().unwrap()).collect()).collect();
+		    let vectortxt:Vec<Vec<String>> = std::fs::read_to_string("../../glove/vectors.txt").expect("?!").split("\n").map(|line| line.split(" ").map(|s| String::from(s)).collect()).collect();
+		    let mut vectors:Vec<Vec<f32>> = (0..pdmulani.len())
+            .map(|_| Vec::new())
+            .collect();
+		    for v in vectortxt.iter() {
+		        match pdmulani.binary_search(&v[0].replace("_", " ")) {
+		            Ok(i) => {
+		                vectors[i] = v.iter().enumerate().filter(|(j, _)| *j>0_usize).map(|(_, f)| f.parse::<f32>().unwrap()).collect();
+		            },
+		            Err(_) => {},
+		        }
+		    }
 		    vectors
 		};
-
-		println!("\n{:?}\n", vectors[0]);
 
     let (covariance, norm) = {
         let mut sngh: Vec<Vec<i64>> = (0..pdmulani.len())
@@ -273,7 +282,6 @@ async fn main() -> std::io::Result<()> {
         r: mndlani,
         c: covariance,
         p: pdmulani,
-        y: pdrgyogh,
         n: norm,
     });
 
