@@ -1,6 +1,6 @@
 use vedaweb;
 
-fn upsrstkriyarmbah(mndlani: Vec<Vec<Vec<vedaweb::Rk>>>) {
+fn upsrstkriyarmbah(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     for r in mndlani.iter().flatten().flatten() {
         for c in &r.crnani {
             if c.len() > 1 {
@@ -20,13 +20,41 @@ fn upsrstkriyarmbah(mndlani: Vec<Vec<Vec<vedaweb::Rk>>>) {
     }
 }
 
-fn grdrkrmh(mndlani: Vec<Vec<Vec<vedaweb::Rk>>>) {
+fn gntvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    fn gntvm(su: &(usize, usize, &Vec<vedaweb::Rk>)) -> f32 {
+        let mut pdani: Vec<String> = Vec::new();
+        let mut pdsnkya = 0;
+        for r in su.2 {
+            for p in r.crnani.iter().flatten() {
+                match pdani.binary_search(&p.mulm) {
+                    Ok(n) => {},
+                    Err(n) => {pdani.insert(n, String::from(&p.mulm));},
+                }
+                pdsnkya += 1;
+            }
+        }
+        pdani.len() as f32 / pdsnkya as f32
+    }
+
+    let mut suktani: Vec<(usize, usize, &Vec<vedaweb::Rk>)> = mndlani.iter().enumerate().map(|(mi, m)| {
+        m.iter().enumerate().filter(|(_, s)| s[0].strata=="A").map(|(si, s)| (mi, si, s)).collect::<Vec<(usize, usize, &Vec<vedaweb::Rk>)>>()
+    }).flatten().collect();
+    suktani.sort_by(|a, b| gntvm(a).partial_cmp(&gntvm(b)).unwrap());
+
+    std::fs::write("../gntv.krmh", String::from("घ॒न॒त्व॒क्र॒मः\n") + &suktani.iter().map(|s| (0..s.2.len()).map(|ri| format!("{}.{}.{}", s.0 + 1, s.1 + 1, ri + 1)).collect::<Vec<String>>()).flatten().collect::<Vec<String>>().join("\n"));
+}
+
+fn crnsngrhnm(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    std::fs::write("../crnani", mndlani.iter().flatten().flatten().map(|r| String::from(&r.smhita)).collect::<Vec<String>>().join("\n"));
+}
+
+fn grdrkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     /*let suktsngrh: Vec<(usize, usize, usize, )>
     std::fs::write("../grdr.krmh", String::from("गृ॒ध्र॒क्र॒मः") + &mndlani.iter()
     */
 }
 
-fn prtmpuruskrmh(mndlani: Vec<Vec<Vec<vedaweb::Rk>>>) {
+fn prtmpuruskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     std::fs::write(
         "../prtmpurus.krmh",
         String::from("प्र॒थ॒म॒पु॒रु॒ष॒क्र॒मः\n")
@@ -69,7 +97,7 @@ fn prtmpuruskrmh(mndlani: Vec<Vec<Vec<vedaweb::Rk>>>) {
     //std::fs::write("../prtmpuruskrmh", mndlani.iter().enumerate().map(|(mi, m)| m.iter().enumerate().filter(|(_, s)| s.iter().all(|r| r.strata=="A" && r.crnani.iter().flatten().all(|p| vedaweb::drmnamani(&p).iter().all(|&n| n != "2" && n != "1") && p.mulm != "tvám" && p.mulm != "ahám"))).map(|(si, s)| (0..s.len()).map(|ri| format!("{}.{}.{}", mi+1, si+1, ri+1)).collect::<Vec<String>>().join("\n")).collect::<Vec<String>>().join("\n")).filter(|ms| ms != "").collect::<Vec<String>>().join("\n"));
 }
 
-fn mulpath(mndlani: Vec<Vec<Vec<vedaweb::Rk>>>) {
+fn mulpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     std::fs::write(
         "../rvmulani",
         mndlani
@@ -101,5 +129,9 @@ fn main() {
 
     let mndlani = vedaweb::aropnm(&args[1]).unwrap().0;
 
-    mulpath(mndlani);
+    prtmpuruskrmh(&mndlani);
+    grdrkrmh(&mndlani);
+    mulpath(&mndlani);
+    crnsngrhnm(&mndlani);
+    gntvkrmh(&mndlani);
 }

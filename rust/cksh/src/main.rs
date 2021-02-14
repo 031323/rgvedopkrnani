@@ -252,7 +252,7 @@ async fn main() -> std::io::Result<()> {
     println!("pdmulsnkya {}", pdmulani.len());
 
     let vectors = {
-        let vectortxt: Vec<Vec<String>> = std::fs::read_to_string("../../glove/vectors.txt")
+        let vectortxt: Vec<Vec<String>> = std::fs::read_to_string("../../GloVe/vectors.txt")
             .expect("?!")
             .split("\n")
             .map(|line| line.split(" ").map(|s| String::from(s)).collect())
