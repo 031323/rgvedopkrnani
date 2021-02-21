@@ -20,6 +20,27 @@ fn upsrstkriyarmbah(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     }
 }
 
+fn pdsrvskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    let (pdmulani, pdrgyogh) = vedyogah::pdmulani(&mndlani);
+    let srvh = |su: &(usize, usize, &Vec<vedaweb::Rk>)| -> i32 {
+        let mut pdani: Vec<String> = Vec::new();
+        for r in su.2 {
+            for p in r.crnani.iter().flatten() {
+                pdani.push(String::from(&p.mulm));
+            }
+        }
+        pdani.sort_by_key(|m| pdrgyogh[pdmulani.binary_search(m).unwrap()]);
+        pdrgyogh[pdmulani.binary_search(&pdani[pdani.len()/10]).unwrap()]
+    };
+
+    let mut suktani: Vec<(usize, usize, &Vec<vedaweb::Rk>)> = mndlani.iter().enumerate().map(|(mi, m)| {
+        m.iter().enumerate().filter(|(_, s)| s[0].strata=="A").map(|(si, s)| (mi, si, s)).collect::<Vec<(usize, usize, &Vec<vedaweb::Rk>)>>()
+    }).flatten().collect();
+    suktani.sort_by(|a, b| srvh(a).partial_cmp(&srvh(b)).unwrap());
+
+    std::fs::write("../srvs.krmh", String::from("प॒द॒श्र॒व॒स्क्र॒मः\n") + &suktani.iter().map(|s| (0..s.2.len()).map(|ri| format!("{}.{}.{}", s.0 + 1, s.1 + 1, ri + 1)).collect::<Vec<String>>()).flatten().collect::<Vec<String>>().join("\n"));
+}
+
 fn gntvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     fn gntvm(su: &(usize, usize, &Vec<vedaweb::Rk>)) -> f32 {
         let mut pdani: Vec<String> = Vec::new();
@@ -64,19 +85,31 @@ fn prtmpuruskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                 .map(|(mi, m)| {
                     m.iter()
                         .enumerate()
+                        .filter(|(_, s)| {
+                            s.iter().any(|r| r.crnani.iter().flatten().any(|p| p.mulm == "pitú-"))
+                        })
+                        /*.filter(|(_, s)| {
+                            s.iter().all(|r| {
+                                r.strata == "A"
+                                  && r.crnani.iter().flatten().all(|p| {
+                                            vedaweb::drmnamani(&p).iter().all(|&n| {
+                                                n != "2"
+                                                    && n != "1"
+                                                    && n != "VOC"
+                                            }) && p.mulm != "tvám"
+                                                && p.mulm != "ahám"
+                                        })
+                            })
+                        })*/
                         .map(|(si, s)| {
                             (0..s.len())
                                 .filter(|&ri| {
                                     s[ri].strata == "A"
                                         && s[ri].crnani.iter().flatten().all(|p| {
                                             vedaweb::drmnamani(&p).iter().all(|&n| {
-                                                n != "2"
-                                                    && n != "1"
+                                                /*n != "2"
+                                                    &&*/ n != "1"
                                                     && n != "VOC"
-                                                    && n != "IMP"
-                                                    && n != "INJ"
-                                                    && n != "OPT"
-                                                    && n != "SBJV"
                                             }) && p.mulm != "tvám"
                                                 && p.mulm != "ahám"
                                         })
@@ -134,4 +167,5 @@ fn main() {
     mulpath(&mndlani);
     crnsngrhnm(&mndlani);
     gntvkrmh(&mndlani);
+    pdsrvskrmh(&mndlani);
 }
