@@ -2,7 +2,7 @@ use std::fs;
 
 fn main() {
 	const VYNJNANI: &str = "kKgGNcCjJYwWqQRtTdDnpPbBmyrlvSzshx";
-	const SVRGNAH: [&str; 4] = ["aAeEoO", "iI", "uU", "fF"];
+	const SVRGNAH: [&str; 6] = ["aAEO", "e", "o", "iI", "uU", "fF"];
 	const AKSRSNKYA: usize = VYNJNANI.len() * SVRGNAH.len();
 	type Aksrani = [u8; AKSRSNKYA];
 	
@@ -22,7 +22,7 @@ fn main() {
 		})
 		.collect();
 	
-	let iast: Vec<String> = fs::read_to_string("iast2")
+	let iast: Vec<String> = fs::read_to_string("crnani")
 		.expect("file?!")
 		.split('\n')
 		.map(|s: &str| s.to_string())
