@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-	const VRNAH: &str = "kKgGNcCjJYwWqQRtTdDnpPbBmyrlvSzshLaAEOeoiIuUfFHM~";
+	const VRNAH: &str = "_kKgGNcCjJYwWqQRtTdDnpPbBmyrlvSzshLaAEOeoiIuUfFHM~";
 	const AKSRSNKYA: usize = VRNAH.len() * VRNAH.len();
 	type Aksrani = [u8; AKSRSNKYA];
 	
@@ -26,7 +26,7 @@ fn main() {
 		.split('\n')
 		.map(|s| {
 			let mut aksrani = [0; AKSRSNKYA];
-			let sc: Vec<char> = s.chars().collect();
+			let sc: Vec<char> = ("_".to_string() + s + "_").chars().collect();
 			for i in 0..sc.len()-1 {
 				let c = sc[i];
 				if i < s.len() - 1 {

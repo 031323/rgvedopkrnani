@@ -22,4 +22,3 @@ def iast235(s):
     t=re.sub(r'H(?= ?[kK])', 'Z', t)
     t=re.sub(r'H(?= ?[pP])', 'V', t)
     return t
-
