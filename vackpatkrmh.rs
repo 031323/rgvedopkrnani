@@ -45,7 +45,7 @@ fn main() {
 
 	let mut m = 0;
 	let mut ptitani = 0;
-	let mut aksrani = [0; AKSRSNKYA];
+	let mut aksrani = [0_u8; AKSRSNKYA];
 	while ptitani < slp.len() {
 		let mut nvtvm = 1_f64;
 		while nvtvm > 0_f64 {
@@ -74,7 +74,10 @@ fn main() {
 					ptitani += 1;
 					slp[D].ptitm = true;
 					for i in 0..AKSRSNKYA {
-						aksrani[i] += slp[D].aksrani[i];
+						aksrani[i] = match aksrani[i].checked_add(slp[D].aksrani[i]) {
+							Some(a) => a,
+							None => aksrani[i],
+						};
 					}
 					println!("{}", iast[D]);
 					/*println!("{} {} {}", ptitani, aksrani.iter().fold(0, |n, x| {
