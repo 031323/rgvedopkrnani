@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-	const VRNAH: &str = "_kKgGNcCjJYwWqQRtTdDnpPbBmyrlvSzshLaAEOeoiIuUfFHM~";
+	const VRNAH: &str = "_kKgGNcCjJYwWqQRtTdDnpPbBmyrlvSzshLaAEOeoiIuUfFHM~ZV";
 	const AKSRSNKYA: usize = VRNAH.len() * VRNAH.len();
 	type Aksrani = [u8; AKSRSNKYA];
 	
@@ -89,7 +89,7 @@ fn main() {
 		}
 		for i in 0..AKSRSNKYA {
 			if aksrani[i] == 0 {
-				println!("{} {}", vrnkrmh[i/VRNAH.len()], i%VRNAH.len());
+				println!("{} {}", vrnkrmh[i/VRNAH.len()], vrnkrmh[i%VRNAH.len()]);
 			}
 		}
 		m += 1;

@@ -126,13 +126,13 @@ pub fn aropnm(c_salt_dir: &str) -> Result<Rgvedh, std::io::Error> {
                                         .descendants()
                                         .find(|d| d.attribute("source") == Some("vnh"))
                                     {
-                                        Some(vnh) if false => vnh
+                                        Some(vnh) => vnh
                                             .descendants()
                                             .filter(|d| d.has_tag_name("l"))
                                             .map(|d| d.text().unwrap().to_string())
                                             .collect::<Vec<String>>()
                                             .join("\n"),
-                                        _ => r
+                                        None => r
                                             .descendants()
                                             .find(|d| d.attribute("source") == Some("zurich"))
                                             .unwrap()
