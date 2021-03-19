@@ -30,13 +30,15 @@ fn pdsrvskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
             }
         }
         pdani.sort_by_key(|m| pdrgyogh[pdmulani.binary_search(m).unwrap()]);
-        pdrgyogh[pdmulani.binary_search(&pdani[pdani.len()/10]).unwrap()]
+        //println!("{:?}", pdrgyogh[pdmulani.binary_search(&pdani[pdani.len()/5]).unwrap()]);
+        pdrgyogh[pdmulani.binary_search(&pdani[pdani.len()/5]).unwrap()]
+
     };
 
     let mut suktani: Vec<(usize, usize, &Vec<vedaweb::Rk>)> = mndlani.iter().enumerate().map(|(mi, m)| {
-        m.iter().enumerate().filter(|(_, s)| s[0].strata=="A").map(|(si, s)| (mi, si, s)).collect::<Vec<(usize, usize, &Vec<vedaweb::Rk>)>>()
+        m.iter().enumerate().filter(|(_, s)| s.iter().all(|r| r.strata=="A")).map(|(si, s)| (mi, si, s)).collect::<Vec<(usize, usize, &Vec<vedaweb::Rk>)>>()
     }).flatten().collect();
-    suktani.sort_by(|a, b| srvh(a).partial_cmp(&srvh(b)).unwrap());
+    suktani.sort_by(|a, b| srvh(b).partial_cmp(&srvh(a)).unwrap());
 
     std::fs::write("../srvs.krmh", String::from("प॒द॒श्र॒व॒स्क्र॒मः\n") + &suktani.iter().map(|s| (0..s.2.len()).map(|ri| format!("{}.{}.{}", s.0 + 1, s.1 + 1, ri + 1)).collect::<Vec<String>>()).flatten().collect::<Vec<String>>().join("\n"));
 }
