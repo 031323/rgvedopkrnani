@@ -30,6 +30,7 @@ pub fn pdmulani(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) -> (Vec<String>, Vec<i32>)
         }
         let mut krmh: Vec<usize> = (0..pdmulani.len()).collect();
         krmh.sort_by_key(|&k| -pdrgyogh[k]);
+        println!("{:?}", krmh.len());
         for k in krmh {
           println!("{}\t{}", pdmulani[k], pdrgyogh[k]);
         }

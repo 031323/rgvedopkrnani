@@ -22,16 +22,19 @@ fn upsrstkriyarmbah(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
 
 fn pdsrvskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     let (pdmulani, pdrgyogh) = vedyogah::pdmulani(&mndlani);
-    let srvh = |su: &(usize, usize, &Vec<vedaweb::Rk>)| -> i32 {
+    let srvh = |su: &(usize, usize, &Vec<vedaweb::Rk>)| -> usize {
         let mut pdani: Vec<String> = Vec::new();
         for r in su.2 {
             for p in r.crnani.iter().flatten() {
                 pdani.push(String::from(&p.mulm));
             }
         }
-        pdani.sort_by_key(|m| pdrgyogh[pdmulani.binary_search(m).unwrap()]);
         //println!("{:?}", pdrgyogh[pdmulani.binary_search(&pdani[pdani.len()/5]).unwrap()]);
-        pdrgyogh[pdmulani.binary_search(&pdani[pdani.len()/5]).unwrap()]
+        println!("{:?}", pdani.iter().fold(0, |n, m| if pdrgyogh[pdmulani.binary_search(m).unwrap()] > 125 {n+1} else {n} ) as f32 / pdani.len() as f32);
+        pdani.iter().fold(0, |n, m| if pdrgyogh[pdmulani.binary_search(m).unwrap()] > 125 {n+1} else {n} ) * 100 / pdani.len()
+
+        //pdani.sort_by_key(|m| pdrgyogh[pdmulani.binary_search(m).unwrap()]);
+        //pdrgyogh[pdmulani.binary_search(&pdani[pdani.len()/5]).unwrap()]
 
     };
 
