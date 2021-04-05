@@ -1,5 +1,6 @@
 use std::env;
 use vedaweb;
+use std::process::Command;
 
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 use serde::Deserialize;
@@ -43,7 +44,8 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
 
     let lekh = |r: &vedaweb::Rk| -> String {
         format!(
-            "<p>{}</p><p>{}</p>",
+            "<p onclick='suvacnarmbh(\"{}\", function(){{}});'>{}</p><p>{}</p>",
+            String::from_utf8(Command::new("python3").arg("../iast235.py").arg(&r.smhita).output().unwrap().stdout).unwrap().replace("\n", " "),
             r.smhita.replace("\n", "<br>"),
             r.crnani
                 .iter()
@@ -89,7 +91,12 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
             a    { color: blue; text-decoration: none; }
             .b   { color: blue; font-weight: bold; }
         </style>
-
+        <body>
+        <script src='https://031323.github.io/suvak/suvak3.js'></script>
+        <script>
+            suvagarmbh(function(){}, function(){console.log('reload');setTimeout(function(){location.reload()},5000)})
+        </script>
+        </body>
     ";
 
     HttpResponse::Ok()
