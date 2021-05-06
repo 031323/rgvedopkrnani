@@ -71,7 +71,7 @@ fn gntvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
 }
 
 fn crnsngrhnm(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
-    std::fs::write("../crnani", mndlani.iter().flatten().flatten().filter(|r| r.strata=="A").map(|r| String::from(&r.smhita)).collect::<Vec<String>>().join("\n\n"));
+    std::fs::write("../crnani2", mndlani.iter().flatten().flatten().filter(|r| true || r.strata=="A").map(|r| String::from(&r.smhita)).collect::<Vec<String>>().join("\n\n"));
 }
 
 fn grdrkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {

@@ -10,7 +10,7 @@ def visrgh(s):
 
 def iast235(s):
     t = s
-    for c in "'()*3:[]~":
+    for c in "'()*3:[]~+@":
         t=t.replace(c, '-')
     for p in 'á:a3 à:a5 í:i3 ì:i5 ú:u3 ù:u5 ŕ̥:r̥3 é:e3 è:e5 ó:o3 ò:o5 ́:3 \\:6 ̀:5 ṁ:ṃ Å:-u'.split(' '):
         ps = p.split(':')
@@ -44,7 +44,18 @@ def iast2dev(s):
     t=t.replace('॒H', 'H॒')
     t=t.replace('॒M', 'M॒')
     t=t.replace('5', '२॒॑')
-    return sanscript.transliterate(t, sanscript.SLP1, sanscript.DEVANAGARI)
+    t=sanscript.transliterate(t, sanscript.SLP1, sanscript.DEVANAGARI)
+    t=t.split('\n\n')
+    ut=[]
+    for tt in t:
+        tt=tt.split('\n')
+        u=[tt[0]]
+        for i in range(1, len(tt)):
+            if not i%2:
+                u.append('। ')
+            u.append(tt[i])
+        ut.append(''.join(u))
+    return '। '.join(ut) + '।'
     
 def main():
     print(iast2dev(sys.argv[1]))
