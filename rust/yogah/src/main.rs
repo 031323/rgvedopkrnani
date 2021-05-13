@@ -70,6 +70,8 @@ fn gntvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     std::fs::write("../gntv.krmh", String::from("घ॒न॒त्व॒क्र॒मः\n") + &suktani.iter().map(|s| (0..s.2.len()).map(|ri| format!("{}.{}.{}", s.0 + 1, s.1 + 1, ri + 1)).collect::<Vec<String>>()).flatten().collect::<Vec<String>>().join("\n"));
 }
 
+
+
 fn crnsngrhnm(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     std::fs::write("../crnani2", mndlani.iter().flatten().flatten().filter(|r| true || r.strata=="A").map(|r| String::from(&r.smhita)).collect::<Vec<String>>().join("\n\n"));
 }
@@ -78,6 +80,36 @@ fn grdrkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     /*let suktsngrh: Vec<(usize, usize, usize, )>
     std::fs::write("../grdr.krmh", String::from("गृ॒ध्र॒क्र॒मः") + &mndlani.iter()
     */
+}
+
+fn arskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    std::fs::write(
+        "../ars.krmh",
+        String::from("आ॒र्ष॒क्र॒मः\n")
+            + &mndlani
+                .iter()
+                .enumerate()
+                .filter(|(mi, _)| {*mi > 0 && *mi < 7})
+                .map(|(mi, m)| {
+                    m.iter()
+                        .enumerate()
+                        .map(|(si, s)| {
+                            (0..s.len())
+                                .filter(|&ri| {
+                                    s[ri].strata == "A"
+                                })
+                                .map(|ri| format!("{}.{}.{}", mi + 1, si + 1, ri + 1))
+                                .collect::<Vec<String>>()
+                                .join("\n")
+                        })
+                        .filter(|ss| ss != "")
+                        .collect::<Vec<String>>()
+                        .join("\n")
+                })
+                .filter(|ms| ms != "")
+                .collect::<Vec<String>>()
+                .join("\n"),
+    );
 }
 
 fn prtmpuruskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
@@ -173,4 +205,5 @@ fn main() {
     crnsngrhnm(&mndlani);
     gntvkrmh(&mndlani);
     pdsrvskrmh(&mndlani);
+    arskrmh(&mndlani);
 }
