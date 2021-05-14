@@ -12,7 +12,6 @@ pub struct Anuyogh {
 }
 
 const DN: &str = "0.0.0.0:8000";
-const VB: &str = "https://vedaweb.uni-koeln.de/rigveda/view/id/";
 
 struct Data {
     r: Vec<Vec<Vec<vedaweb::Rk>>>,
@@ -44,7 +43,7 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
 
     let lekh = |r: &vedaweb::Rk| -> String {
         format!(
-            "<p onclick='suvacnarmbh(\"{}\", function(){{}});'>{}</p><p hidden>{}</p>",
+            "<p onclick='suvacnarmbh(\"{}\", function(){{}});'>{}</p><p hidde>n{}</p>",
             "",//String::from_utf8(Command::new("python3").arg("../iast235.py").arg(&r.smhita).output().unwrap().stdout).unwrap().replace("\n", " "),
             r.smhita.replace("\n", "<br>"),
             r.crnani
@@ -197,7 +196,7 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
                     .map(|(mi, si, ri, r)| {
                         format!(
                             "<a href='{}{1}.{2}.{3}'>{}.{}.{}</a>",
-                            VB,
+                            vedaweb::VB,
                             mi + 1,
                             si + 1,
                             ri + 1

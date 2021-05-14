@@ -55,10 +55,10 @@ def iast2dev(s):
                 u.append('। ')
             u.append(tt[i])
         ut.append(''.join(u))
-    return '। '.join(ut) + '।'
+    return '।\n'.join(ut) + '।'
     
 def main():
-    print(iast2dev(sys.argv[1]))
+    print(iast2dev(open(sys.argv[1]).read()))
 
 if __name__ == "__main__":
     main()

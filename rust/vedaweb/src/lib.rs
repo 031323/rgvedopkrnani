@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 use std::fmt::{self, Display, Formatter};
 use std::io::{Read, Write};
 
+pub const VB: &str = "https://vedaweb.uni-koeln.de/rigveda/view/id/";
+
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct Pdm {
     pub rupm: String,
@@ -47,6 +49,7 @@ impl Display for Pdm {
 pub struct Rk {
     pub strata: String,
     pub smhita: String,
+    pub nagri: String,
     pub crnani: Vec<Vec<Pdm>>,
 }
 
@@ -144,6 +147,15 @@ pub fn aropnm(c_salt_dir: &str) -> Result<Rgvedh, std::io::Error> {
                                             .collect::<Vec<String>>()
                                             .join("\n"),
                                     },
+                                    nagri: r
+                                        .descendants()
+                                        .find(|d| d.attribute("source") == Some("eichler"))
+                                        .unwrap()
+                                        .descendants()
+                                        .filter(|d| d.has_tag_name("l"))
+                                        .map(|d| d.text().unwrap().to_string())
+                                        .collect::<Vec<String>>()
+                                        .join("। ")+"।",
                                     crnani: r
                                         .descendants()
                                         .find(|d| d.attribute("source") == Some("zurich"))

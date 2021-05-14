@@ -1,4 +1,5 @@
 use vedaweb;
+use std::process::Command;
 
 fn upsrstkriyarmbah(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     for r in mndlani.iter().flatten().flatten() {
@@ -80,6 +81,123 @@ fn grdrkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     /*let suktsngrh: Vec<(usize, usize, usize, )>
     std::fs::write("../grdr.krmh", String::from("गृ॒ध्र॒क्र॒मः") + &mndlani.iter()
     */
+}
+
+fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    crnsngrhnm(&mndlani);
+    let uccarnani=String::from_utf8(Command::new("python3").arg("../iast235.py").arg("../crnani2"
+        ).output().unwrap().stdout).unwrap().split("\n").map(|s| String::from(s)).collect::<Vec<String>>();
+    let mut i = 0;
+    let smrupnm=
+    std::fs::write(
+        "../index.html",
+        format!("
+            <html>
+                <head>
+                    <meta charset='UTF-8'>
+                    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                    <title>ऋ॒ग्वे॒दः</title>
+                    <style>
+                        body {{ visibility: visible; }}
+                        a    {{ color: blue; text-decoration: none; }}
+                    </style>
+                </head>
+                <body>
+                    {}
+                    <script src='https://031323.github.io/suvak/suvak2.js'></script>
+                    <script>
+                        var ptyte=false;
+                        var vakyani=[];
+                        var vakykrmh=0;
+                        var ptymanm=0;
+                        var ptniym=0;
+                        suvagarmbh(
+                            function() {{
+                                setTimeout(
+                                    function() {{
+                                        document.body.style.visibility='visible';
+                                    }},
+                                    100
+                                );
+                            }},
+                            () => {{console.log('reload');}}
+                        );
+                        function krmnm() {{
+                            if(vakykrmh<vakyani.length) {{
+                                suvacnarmbh(vakyani[vakykrmh], (t)=>{{}}, krmnm);
+                                vakykrmh += 1;
+                            }}
+                            else rkkrmnm();
+                        }}
+                        function ptnstitih(purvptymanm, purvptniym, pscatptymanm, pscatptniym) {{
+                            if(purvptymanm!=0)
+                                document.getElementById(purvptymanm.toString()).style.backgroundColor='white';
+                            if(purvptniym!=0)
+                                document.getElementById(purvptniym.toString()).style.backgroundColor='white';   
+                            if(pscatptymanm!=0)
+                                document.getElementById(pscatptymanm.toString()).style.backgroundColor='green';
+                            if(pscatptniym!=0)
+                                document.getElementById(pscatptniym.toString()).style.backgroundColor='blue';
+                            ptymanm=pscatptymanm;
+                            ptniym=pscatptniym;
+                        }}
+                        function rkkrmnm() {{
+                            if(ptniym!=0) {{
+                                ptnstitih(ptymanm, ptniym, ptniym, ptniym+1);
+                                vakykrmh=0;
+                                vakyani=document.getElementById(ptymanm.toString()).
+                                    getAttribute('uccarnm').split('। ');
+                                console.log(vakyani);
+                                krmnm();
+                            }}
+                            else {{
+                                ptnstitih(ptymanm, 0, 0, 0);
+                                ptyte=false;
+                            }}
+                        }}
+                        function ptytam(i) {{
+                            ptnstitih(ptymanm, ptniym, ptymanm, i);
+                            if(! ptyte) {{
+                                ptyte = true;
+                                rkkrmnm();
+                            }}
+                        }}
+                    </script>
+                </body>
+            </html>
+        ",
+        &mndlani
+            .iter()
+            .enumerate()
+            .map(|(mi, m)| {
+                m.iter()
+                    .enumerate()
+                    .map(|(si, s)| {
+                        (0..s.len())
+                            .map(|ri| {
+                                i += 1;
+                                format!(
+                                    "<a href='{}{1}.{2}.{3}'>{}.{}.{}</a><div class='rk' id='{}' uccarnm='{}' onclick='ptytam({})'>{}</div>",
+                                    vedaweb::VB,
+                                    mi+1,
+                                    si+1,
+                                    ri+1,
+                                    i,
+                                    uccarnani[i-1],
+                                    i,
+                                    s[ri].nagri
+                                )
+                            })
+                            .collect::<Vec<String>>()
+                            .join("\n")
+                    })
+                    .collect::<Vec<String>>()
+                    .join("\n")
+            })
+            .collect::<Vec<String>>()
+            .join("\n")
+        )
+    );
 }
 
 fn arskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
@@ -198,11 +316,10 @@ fn main() {
     }
 
     let mndlani = vedaweb::aropnm(&args[1]).unwrap().0;
-
+    rgvedpath(&mndlani);
     prtmpuruskrmh(&mndlani);
     grdrkrmh(&mndlani);
     mulpath(&mndlani);
-    crnsngrhnm(&mndlani);
     gntvkrmh(&mndlani);
     pdsrvskrmh(&mndlani);
     arskrmh(&mndlani);
