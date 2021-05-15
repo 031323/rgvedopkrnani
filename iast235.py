@@ -34,14 +34,7 @@ def iast2dev(s):
     t=t.replace('Z', 'H')
     t=t.replace('V', 'H')
     t=t.replace(' ', '')
-    t=re.sub(r'o3(?=[aAiIuUfFeEoO])', 'a3v', t)
-    t=re.sub(r'o5(?=[aAiIuUfFeEoO])', 'a5v', t)
-    t=re.sub(r'o(?=[aAiIuUfFeEoO])', 'av', t)
-    t=re.sub(r'e(?=[aAiIuUfFeEoO])', 'ay', t)
-    t=re.sub(r'e3(?=[aAiIuUfFeEoO])', 'a3y', t)
-    t=re.sub(r'e5(?=[aAiIuUfFeEoO])', 'a5y', t)
-    t=re.sub(r'(?<=[aAiIuUfFeEoO])(?![35])', '@', t)
-
+    
     t=t.split('\n\n')
     ut=[]
     for tt in t:
@@ -53,6 +46,14 @@ def iast2dev(s):
             u.append(tt[i])
         ut.append(''.join(u))
     t = '।\n'.join(ut) + '।'
+
+    t=re.sub(r'o3(?=[aAiIuUfFeEoO])', 'a3v', t)
+    t=re.sub(r'o5(?=[aAiIuUfFeEoO])', 'a5v', t)
+    t=re.sub(r'o(?=[aAiIuUfFeEoO])', 'av', t)
+    t=re.sub(r'e(?=[aAiIuUfFeEoO])', 'ay', t)
+    t=re.sub(r'e3(?=[aAiIuUfFeEoO])', 'a3y', t)
+    t=re.sub(r'e5(?=[aAiIuUfFeEoO])', 'a5y', t)
+    t=re.sub(r'(?<=[aAiIuUfFeEoO])(?![35])', '@', t)
 
     t=re.sub(r'@(?=[^aAiIuUfFeEoO।]*[aAiIuUfFeEoO][35])', '॒', t) #snntrh
     t=regex.sub(r'(?<=3[^aAiIuUfFeEoO।]*[aAiIuUfFeEoO])@', '5', t) #udattadnudattsysvrith

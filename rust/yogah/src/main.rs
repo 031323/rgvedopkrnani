@@ -74,7 +74,7 @@ fn gntvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
 
 
 fn crnsngrhnm(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
-    std::fs::write("../crnani", mndlani.iter().flatten().flatten().filter(|r| r.strata=="A").map(|r| String::from(&r.smhita)).collect::<Vec<String>>().join("\n\n"));
+    std::fs::write("../crnani2", mndlani.iter().flatten().flatten().filter(|r| true || r.strata=="A").map(|r| String::from(&r.smhita)).collect::<Vec<String>>().join("\n\n"));
 }
 
 fn grdrkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
@@ -85,12 +85,12 @@ fn grdrkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
 
 fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     crnsngrhnm(&mndlani);
-    let uccarnani=String::from_utf8(Command::new("python3").arg("../iast235.py").arg("../crnani"
+    let uccarnani=String::from_utf8(Command::new("python3").arg("../iast235.py").arg("../crnani2"
         ).output().unwrap().stdout).unwrap().split("\n").map(|s| String::from(s)).collect::<Vec<String>>();
     let mut i = 0;
     let smrupnm=
     std::fs::write(
-        "../path2.html",
+        "../path.html",
         format!("
             <html>
                 <head>
@@ -204,7 +204,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                     .enumerate()
                     .map(|(si, s)| {
                         (0..s.len())
-                            .filter(|&ri| s[ri].strata == "A")
+                            .filter(|&ri| true || s[ri].strata == "A")
                             .map(|ri| {
                                 i += 1;
                                 format!(
