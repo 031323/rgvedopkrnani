@@ -155,7 +155,7 @@ pub fn aropnm(c_salt_dir: &str) -> Result<Rgvedh, std::io::Error> {
                                         .filter(|d| d.has_tag_name("l"))
                                         .map(|d| d.text().unwrap().to_string())
                                         .collect::<Vec<String>>()
-                                        .join("। ")+"।",
+                                        .join("\n"),
                                     crnani: r
                                         .descendants()
                                         .find(|d| d.attribute("source") == Some("zurich"))

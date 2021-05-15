@@ -128,7 +128,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                         </a>
                     </div>
                     {}
-                    <script src='https://031323.github.io/suvak/suvak2.js'></script>
+                    <script src='../suvak/suvak2.js'></script>
                     <script>
                         var ptyte=false;
                         var vakyani=[];
@@ -214,7 +214,8 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                                     si+1,
                                     ri+1,
                                     i,
-                                    s[ri].nagri
+                                    s[ri].nagri.split("\n").map(|s| String::from(s)).collect::<Vec<String>>()
+                                        .join("। ")+"॥"
                                 )
                             })
                             .collect::<Vec<String>>()
