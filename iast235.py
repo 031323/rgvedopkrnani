@@ -1,5 +1,6 @@
 from indic_transliteration import sanscript
 import re, sys
+import regex
 
 def visrgh(s):
     t = s
@@ -39,12 +40,8 @@ def iast2dev(s):
     t=re.sub(r'e(?=[aAiIuUfFeEoO])', 'ay', t)
     t=re.sub(r'e3(?=[aAiIuUfFeEoO])', 'a3y', t)
     t=re.sub(r'e5(?=[aAiIuUfFeEoO])', 'a5y', t)
-    t=re.sub(r'(?<=[aAiIuUfFeEoO])(?![35])', '॒', t)
-    t=t.replace('3', '')
-    t=t.replace('॒H', 'H॒')
-    t=t.replace('॒M', 'M॒')
-    t=t.replace('5', '२॒॑')
-    t=sanscript.transliterate(t, sanscript.SLP1, sanscript.DEVANAGARI)
+    t=re.sub(r'(?<=[aAiIuUfFeEoO])(?![35])', '@', t)
+
     t=t.split('\n\n')
     ut=[]
     for tt in t:
@@ -55,8 +52,26 @@ def iast2dev(s):
                 u.append('। ')
             u.append(tt[i])
         ut.append(''.join(u))
-    return '।\n'.join(ut) + '।'
-    
+    t = '।\n'.join(ut) + '।'
+
+    t=re.sub(r'@(?=[^aAiIuUfFeEoO।]*[aAiIuUfFeEoO][35])', '॒', t) #snntrh
+    t=regex.sub(r'(?<=3[^aAiIuUfFeEoO।]*[aAiIuUfFeEoO])@', '5', t) #udattadnudattsysvrith
+    s=t
+    while True:
+        t=regex.sub(r'(?<=[5%][^aAiIuUfFeEoO।]*[aAiIuUfFeEoO])@', '%', t)
+        if t!=s:
+            s=t
+        else:
+            break
+    t=t.replace('%', '')
+    t=t.replace('@', '॒')
+    t=t.replace('3', '')
+    #t=t.replace('॒H', 'H॒')
+    #t=t.replace('॒M', 'M॒')
+    t=re.sub(r'5(?=[^aAiIuUfFeEoO।]*[aAiIuUfFeEoO][35])', '२॒॑', t)
+    t=t.replace('5', '॑')
+    return sanscript.transliterate(t, sanscript.SLP1, sanscript.DEVANAGARI)
+
 def main():
     print(iast2dev(open(sys.argv[1]).read()))
 
