@@ -105,7 +105,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                             position:           fixed;
                             bottom:             10%;
                             right:              10%;
-                            width:              10%;
+                            height:             10%;
                             background-color:   transparent;
                         }}
                         div.ptymanm {{
