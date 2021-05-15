@@ -148,7 +148,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                         );
                         function krmnm() {{
                             if(vakykrmh<vakyani.length) {{
-                                suvacnarmbh(vakyani[vakykrmh], (t)=>{{}}, krmnm);
+                                suvacnarmbh(vakyani[vakykrmh].replace('ळ','ड'), (t)=>{{}}, krmnm);
                                 vakykrmh += 1;
                             }}
                             else rkkrmnm();
@@ -158,9 +158,10 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                                 document.getElementById(purvptymanm.toString()).className='';
                             if(purvptniym!=0)
                                 document.getElementById(purvptniym.toString()).className='';   
-                            if(pscatptymanm!=0)
+                            if(pscatptymanm!=0) {{
                                 document.getElementById(pscatptymanm.toString()).className='ptymanm';
-                            document.getElementById('scroll').href='#'+pscatptymanm.toString();
+                                document.getElementById('scroll').href='#'+pscatptymanm.toString();
+                            }}
                             if(pscatptniym!=0)
                                 document.getElementById(pscatptniym.toString()).className='ptniym';
                             ptymanm=pscatptymanm;
