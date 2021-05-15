@@ -90,7 +90,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     let mut i = 0;
     let smrupnm=
     std::fs::write(
-        "../index.html",
+        "../path.html",
         format!("
             <html>
                 <head>
@@ -98,11 +98,35 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
                     <title>ऋ॒ग्वे॒दः</title>
                     <style>
+                        html {{ scroll-behavior: smooth; }}
                         body {{ visibility: visible; }}
                         a    {{ color: blue; text-decoration: none; }}
+                        div.fixed {{
+                            position:           fixed;
+                            bottom:             10%;
+                            right:              10%;
+                            width:              10%;
+                            background-color:   transparent;
+                        }}
+                        div.ptymanm {{
+                            font-weight: bold;
+                        }}
+                        div.ptniym {{
+                            background-color: GreenYellow;
+                        }}
                     </style>
                 </head>
                 <body>
+                    <div class='fixed'>
+                        <a id='scroll'>
+                            <svg width='100%' viewBox='0 0 100 100'>
+                                <circle cx='50' cy='50' r='50' fill='indigo' />
+                                <circle cx='50' cy='50' r='30' fill='white' />
+                                <rect x='40' y='10' width='20' height='80' fill='white' />
+                                <circle cx='50' cy='50' r='20' fill='indigo' />
+                            </svg>
+                        </a>
+                    </div>
                     {}
                     <script src='https://031323.github.io/suvak/suvak2.js'></script>
                     <script>
@@ -131,13 +155,14 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                         }}
                         function ptnstitih(purvptymanm, purvptniym, pscatptymanm, pscatptniym) {{
                             if(purvptymanm!=0)
-                                document.getElementById(purvptymanm.toString()).style.backgroundColor='white';
+                                document.getElementById(purvptymanm.toString()).className='';
                             if(purvptniym!=0)
-                                document.getElementById(purvptniym.toString()).style.backgroundColor='white';   
+                                document.getElementById(purvptniym.toString()).className='';   
                             if(pscatptymanm!=0)
-                                document.getElementById(pscatptymanm.toString()).style.backgroundColor='green';
+                                document.getElementById(pscatptymanm.toString()).className='ptymanm';
+                            document.getElementById('scroll').href='#'+pscatptymanm.toString();
                             if(pscatptniym!=0)
-                                document.getElementById(pscatptniym.toString()).style.backgroundColor='blue';
+                                document.getElementById(pscatptniym.toString()).className='ptniym';
                             ptymanm=pscatptymanm;
                             ptniym=pscatptniym;
                         }}
@@ -156,7 +181,10 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                             }}
                         }}
                         function ptytam(i) {{
-                            ptnstitih(ptymanm, ptniym, ptymanm, i);
+                            if(i!=ptymanm && i!=ptniym)
+                                ptnstitih(ptymanm, ptniym, ptymanm, i);
+                            else
+                                ptnstitih(ptymanm, ptniym, ptymanm, 0);
                             if(! ptyte) {{
                                 ptyte = true;
                                 rkkrmnm();
@@ -177,13 +205,14 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                             .map(|ri| {
                                 i += 1;
                                 format!(
-                                    "<a href='{}{1}.{2}.{3}'>{}.{}.{}</a><div class='rk' id='{}' uccarnm='{}' onclick='ptytam({})'>{}</div>",
+                                    "<div class='rk' id='{}' uccarnm='{}'><a href='{}{3}.{4}.{5}' target='_blank'>{}.{}.{}</a><span onclick='ptytam({})'> {}</span></div>",
+                                    
+                                    i,
+                                    uccarnani[i-1],
                                     vedaweb::VB,
                                     mi+1,
                                     si+1,
                                     ri+1,
-                                    i,
-                                    uccarnani[i-1],
                                     i,
                                     s[ri].nagri
                                 )
