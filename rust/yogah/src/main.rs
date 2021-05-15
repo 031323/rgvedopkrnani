@@ -99,7 +99,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                     <title>ऋ॒ग्वे॒दः</title>
                     <style>
                         html {{ scroll-behavior: smooth; }}
-                        body {{ visibility: visible; }}
+                        body {{ visibility: hidden; }}
                         a    {{ color: blue; text-decoration: none; }}
                         div.fixed {{
                             position:           fixed;
@@ -130,6 +130,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                     {}
                     <script src='../suvak/suvak2.js'></script>
                     <script>
+                        suvak_svr1=150;
                         var ptyte=false;
                         var vakyani=[];
                         var vakykrmh=0;
