@@ -153,7 +153,12 @@ pub fn aropnm(c_salt_dir: &str) -> Result<Rgvedh, std::io::Error> {
                                         .unwrap()
                                         .descendants()
                                         .filter(|d| d.has_tag_name("l"))
-                                        .map(|d| d.text().unwrap().to_string())
+                                        .map(|d| d.text().unwrap().to_string()
+                                            .replace("१॒॑ः", "ः१॒॑")
+                                            .replace("१॒॑ं", "ं१॒॑")
+                                            .replace("३॒॑ः", "ः३॒॑")
+                                            .replace("३॒॑ं", "ं३॒॑")
+                                        )
                                         .collect::<Vec<String>>()
                                         .join("\n"),
                                     crnani: r
