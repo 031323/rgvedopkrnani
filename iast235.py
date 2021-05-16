@@ -27,7 +27,15 @@ def iast235(s):
     t=re.sub(r'H(?= ?[pP])', 'V', t)
     return t
 
-def iast2dev(s):
+def yogah(vstuni, patrani):
+    if vstuni < patrani or patrani < 1:
+        return []
+    elif patrani==1:
+        return [[vstuni]]
+    else:
+        return [[i]+y for i in range(1, vstuni-patrani+2) for y in yogah(vstuni-i, patrani-1)]
+
+def iast2dev(s, nagri):
     t=iast235(s)
     t=t.replace('5', '')
     t=t.replace('6', '5')
@@ -36,16 +44,39 @@ def iast2dev(s):
     t=t.replace(' ', '')
     
     t=t.split('\n\n')
-    ut=[]
-    for tt in t:
-        tt=tt.split('\n')
-        u=[tt[0]]
-        for i in range(1, len(tt)):
-            if not i%2:
-                u.append('। ')
-            u.append(tt[i])
-        ut.append(''.join(u))
-    t = '।\n'.join(ut) + '।'
+    n=nagri.split('\n\n')
+    for i in range(len(t)):
+        tt=t[i].split('\n')
+        nn=n[i].split('\n')
+        tl=sum([len(tj) for tj in tt])
+        nl=sum([len(nj) for nj in nn])
+        yh=yogah(len(tt), len(nn))
+        def k(y):
+            purvyani=0
+            s=0.0
+            for i in range(len(nn)):
+                s+=abs(sum([len(tt[j]) for j in range(purvyani, purvyani+y[i])])/tl - len(nn[i])/nl)
+                purvyani+=y[i]
+            return s
+        ym=min(yh, key=k)
+        tn=[]
+        purvyani=0
+        for ii in range(len(nn)):
+            tn.append(''.join([tt[j] for j in range(purvyani, purvyani+ym[ii])]))
+            purvyani+=ym[ii]
+        t[i]='। '.join(tn)
+    t = '।\n'.join(t) + '।'
+
+    #ut=[]
+    #for tt in t:
+    #    tt=tt.split('\n')
+    #    u=[tt[0]]
+    #    for i in range(1, len(tt)):
+    #        if not i%2:
+    #            u.append('। ')
+    #        u.append(tt[i])
+    #    ut.append(''.join(u))
+    #t = '।\n'.join(ut) + '।'
 
     t=re.sub(r'o3(?=[aAiIuUfFeEoO])', 'a3v', t)
     t=re.sub(r'o5(?=[aAiIuUfFeEoO])', 'a5v', t)
@@ -74,7 +105,7 @@ def iast2dev(s):
     return sanscript.transliterate(t, sanscript.SLP1, sanscript.DEVANAGARI)
 
 def main():
-    print(iast2dev(open(sys.argv[1]).read()))
+    print(iast2dev(open(sys.argv[1]).read(), open(sys.argv[2]).read()))
 
 if __name__ == "__main__":
     main()
