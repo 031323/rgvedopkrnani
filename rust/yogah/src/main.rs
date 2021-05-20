@@ -201,6 +201,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                                 rkkrmnm();
                             }}
                         }}
+                        document.addEventListener('keydown', e=>{{ptnstitih(ptymanm, ptniym, ptymanm, 0);}});
                     </script>
                 </body>
             </html>
