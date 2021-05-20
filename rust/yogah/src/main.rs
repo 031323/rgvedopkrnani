@@ -88,12 +88,12 @@ fn grdrkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
 
 fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     crnsngrhnm(&mndlani);
-    let uccarnani=String::from_utf8(Command::new("python3").arg("../iast235.py").arg("../crnani2"
-        ).arg("../nagri2").output().unwrap().stdout).unwrap().split("\n").map(|s| String::from(s)).collect::<Vec<String>>();
+    let uccarnani=String::from_utf8(Command::new("python3").arg("../iast235.py").arg("../crnani"
+        ).arg("../nagri").output().unwrap().stdout).unwrap().split("\n").map(|s| String::from(s)).collect::<Vec<String>>();
     let mut i = 0;
     let smrupnm=
     std::fs::write(
-        "../1",
+        "../2",
         format!("
             <html>
                 <head>
@@ -214,7 +214,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                     .enumerate()
                     .map(|(si, s)| {
                         (0..s.len())
-                            .filter(|&ri| true || s[ri].strata == "A")
+                            .filter(|&ri| s[ri].strata == "A")
                             .map(|ri| {
                                 i += 1;
                                 format!(

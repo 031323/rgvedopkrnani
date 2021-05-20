@@ -77,6 +77,8 @@ def iast2dev(s, nagri):
     #        u.append(tt[i])
     #    ut.append(''.join(u))
     #t = '।\n'.join(ut) + '।'
+    t=re.sub(r'~r?(?=[aAiIuUfFeEoO])', 'n', t)
+    t=t.replace('~', 'M')
 
     t=re.sub(r'o3(?=[aAiIuUfFeEoO])', 'a3v', t)
     t=re.sub(r'o5(?=[aAiIuUfFeEoO])', 'a5v', t)
