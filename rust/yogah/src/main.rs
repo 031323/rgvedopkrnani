@@ -88,15 +88,16 @@ fn grdrkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
 
 fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     crnsngrhnm(&mndlani);
-    let uccarnani=String::from_utf8(Command::new("python3").arg("../iast235.py").arg("../crnani2"
-        ).arg("../nagri2").output().unwrap().stdout).unwrap().split("\n").map(|s| String::from(s)).collect::<Vec<String>>();
+    let uccarnani=String::from_utf8(Command::new("python3").arg("../iast235.py").arg("../crnani"
+        ).arg("../nagri").output().unwrap().stdout).unwrap().split("\n").map(|s| String::from(s)).collect::<Vec<String>>();
     let mut i = 0;
     let smrupnm=
     std::fs::write(
-        "../path.html",
+        "../2",
         format!("
             <html>
                 <head>
+                    <link rel='icon' type='image/svg' href='2.svg'>
                     <meta charset='UTF-8'>
                     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
                     <title>ऋ॒ग्वे॒दः</title>
@@ -133,7 +134,12 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                     {}
                     <script src='../suvak/suvak2.js'></script>
                     <script>
+                        suvak_udattpurvanudatth=100;
+                        suvak_adisvrh=100;
+                        suvak_svr0=120;
                         suvak_svr1=150;
+                        suvak_svritodatth=180;
+                        udattadnudattsysvrith=true;
                         var ptyte=false;
                         var vakyani=[];
                         var vakykrmh=0;
@@ -207,7 +213,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                     .enumerate()
                     .map(|(si, s)| {
                         (0..s.len())
-                            .filter(|&ri| true || s[ri].strata == "A")
+                            .filter(|&ri| s[ri].strata == "A")
                             .map(|ri| {
                                 i += 1;
                                 format!(
