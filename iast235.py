@@ -18,7 +18,7 @@ def iast235(s):
         t=t.replace(ps[0], ps[1])
     t=t.replace('-', '')
     t=visrgh(t)
-    t=sanscript.transliterate(t, sanscript.IAST, sanscript.SLP1).replace('x', 'L')
+    t=sanscript.transliterate(t, sanscript.IAST, sanscript.SLP1).replace('x', 'L').replace('ff', 'F')
     t=re.sub(r'(?<=[aiuf][35] )C', 'cC', t)
     t=re.sub(r'(?<=[aiuf] )C', 'cC', t)
     t=re.sub(r'(?<=[aiuf][35])C', 'cC', t)

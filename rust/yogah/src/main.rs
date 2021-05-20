@@ -158,7 +158,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                         );
                         function krmnm() {{
                             if(vakykrmh<vakyani.length) {{
-                                suvacnarmbh(vakyani[vakykrmh].replace('ळ','ड'), (t)=>{{}}, krmnm);
+                                suvacnarmbh(vakyani[vakykrmh].replace('ळ्ह', 'ढ').replace('ळ','ड'), (t)=>{{}}, krmnm);
                                 vakykrmh += 1;
                             }}
                             else rkkrmnm();
