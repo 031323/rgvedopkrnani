@@ -137,8 +137,8 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                         suvak_udattpurvanudatth=100;
                         suvak_adisvrh=100;
                         suvak_svr0=120;
-                        suvak_svr1=150;
-                        suvak_svritodatth=180;
+                        suvak_svr1=135;
+                        suvak_svritodatth=150;
                         udattadnudattsysvrith=true;
                         var ptyte=false;
                         var vakyani=[];
