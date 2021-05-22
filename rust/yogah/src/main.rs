@@ -132,7 +132,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                         </a>
                     </div>
                     {}
-                    <script src='../suvak/suvak2.js'></script>
+                    <script src='https://031323.github.io/suvak/suvak2.js'></script>
                     <script>
                         suvak_udattpurvanudatth=100;
                         suvak_adisvrh=100;
@@ -145,6 +145,7 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                         var vakykrmh=0;
                         var ptymanm=0;
                         var ptniym=0;
+                        website='https://031323.github.io/suvak/';
                         suvagarmbh(
                             function() {{
                                 setTimeout(
