@@ -8,13 +8,13 @@ fn upsrstkriyarmbah(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                 if vedaweb::drmnamani(&c[0]).iter().any(|n| *n == "invariable")
                     && vedaweb::drmnamani(&c[1]).iter().any(|n| *n == "root")
                 {
-                    println!(
+                    /*println!(
                         "{}",
                         c.iter()
                             .map(|p| String::from(&p.rupm))
                             .collect::<Vec<String>>()
                             .join(" ")
-                    );
+                    );*/
                 }
             }
         }
@@ -31,7 +31,7 @@ fn pdsrvskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
             }
         }
         //println!("{:?}", pdrgyogh[pdmulani.binary_search(&pdani[pdani.len()/5]).unwrap()]);
-        println!("{:?}", pdani.iter().fold(0, |n, m| if pdrgyogh[pdmulani.binary_search(m).unwrap()] > 125 {n+1} else {n} ) as f32 / pdani.len() as f32);
+        //println!("{:?}", pdani.iter().fold(0, |n, m| if pdrgyogh[pdmulani.binary_search(m).unwrap()] > 125 {n+1} else {n} ) as f32 / pdani.len() as f32);
         pdani.iter().fold(0, |n, m| if pdrgyogh[pdmulani.binary_search(m).unwrap()] > 125 {n+1} else {n} ) * 100 / pdani.len()
 
         //pdani.sort_by_key(|m| pdrgyogh[pdmulani.binary_search(m).unwrap()]);
@@ -75,9 +75,49 @@ fn gntvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
 
 fn crnsngrhnm(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     std::fs::write("../crnani2", mndlani.iter().flatten().flatten().map(|r| String::from(&r.smhita)).collect::<Vec<String>>().join("\n\n"));
+
+    let mut pdani=Vec::new();
+    for r in mndlani.iter().flatten().flatten() {
+        if true || r.strata=="A" {
+        for c in &r.crnani {
+            for i in 0..c.len()-1 {
+                let vstuni = "ajá- amŕ̥ta- aśáni- ádhvan- ádri- áhi- ákṣ- ákṣa- ámatra- ánas- ánna- ánīka- áp- ápas- áśman- íṣ-".to_string().split(" ").map(|v| v.to_string()).collect::<Vec<String>>();
+                if (
+                        /*(c[i].rupm.ends_with("ā") || c[i].rupm.ends_with("ā́")) && (c[i+1].rupm.starts_with("a") || c[i+1].rupm.starts_with("á"))
+                    ||
+                        (c[i].rupm.ends_with("ī") || c[i].rupm.ends_with("ī́")) && (c[i+1].rupm.starts_with("i") || c[i+1].rupm.starts_with("í"))
+                    ||
+                        (c[i].rupm.ends_with("ū") || c[i].rupm.ends_with("ū́")) && (c[i+1].rupm.starts_with("u") || c[i+1].rupm.starts_with("ú"))*/
+
+                        (c[i].rupm.ends_with("ā") || c[i].rupm.ends_with("ā́")) && (c[i+1].rupm.starts_with("ā"))
+                    ||
+                        (c[i].rupm.ends_with("ī") || c[i].rupm.ends_with("ī́")) && (c[i+1].rupm.starts_with("ī"))
+                    ||
+                        (c[i].rupm.ends_with("ū") || c[i].rupm.ends_with("ū́")) && (c[i+1].rupm.starts_with("ū"))
+
+                    )
+                    && vedaweb::drmnamani(&c[i+1]).iter().any(|&n| String::from(n)=="nominal stem") 
+                    //&& vstuni.iter().any(|v| c[i+1].mulm==v.to_string())
+                    {
+                    match pdani.binary_search(&c[i+1].mulm) {
+                        Ok(pos) => {},
+                        Err(pos) => pdani.insert(pos, String::from(&c[i+1].mulm)),
+                    }
+                    //println!("{}", c[i+1].mulm);
+                    println!("{}", c.iter().map(|p| String::from(&p.rupm)).collect::<Vec<String>>().join(" "));
+                }
+            }
+        }
+        }
+    }
+    println!("{}", pdani.join(" "));
+
+
+    std::fs::write("../pdani", mndlani.iter().flatten().flatten().map(|r| r.crnani.iter().map(|c| c.iter().map(|p| String::from(&p.rupm)).collect::<Vec<String>>().join(" ")).collect::<Vec<String>>().join("\n")).collect::<Vec<String>>().join("\n\n"));
     std::fs::write("../crnani", mndlani.iter().flatten().flatten().filter(|r| r.strata=="A").map(|r| String::from(&r.smhita)).collect::<Vec<String>>().join("\n\n"));
     std::fs::write("../nagri2", mndlani.iter().flatten().flatten().map(|r| String::from(&r.nagri)).collect::<Vec<String>>().join("\n\n"));
     std::fs::write("../nagri", mndlani.iter().flatten().flatten().filter(|r| r.strata=="A").map(|r| String::from(&r.nagri)).collect::<Vec<String>>().join("\n\n"));
+
 }
 
 fn grdrkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
