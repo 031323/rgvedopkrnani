@@ -1,4 +1,4 @@
-use vedaweb;
+    use vedaweb;
 use std::process::Command;
 
 fn upsrstkriyarmbah(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
@@ -392,6 +392,30 @@ fn mulpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     .expect("!?");
 }
 
+fn pratipdikani(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    let mut pratipdikani: Vec<String> = vec![];
+    for m in mndlani {
+        for s in m {
+            for r in s {
+                for c in &r.crnani {
+                    for p in c {
+                        if vedaweb::drmnamani(p).iter().any(|&n| String::from(n)=="nominal stem") {
+                            pratipdikani.push(String::from(&p.mulm));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    pratipdikani.sort();
+    pratipdikani.dedup();
+    std::fs::write(
+        "../pratipdikani",
+        pratipdikani.join("\n")
+    )
+    .expect("!?");
+}
+
 fn main() {
     let args: Vec<_> = std::env::args().collect();
     if args.len() != 2 {
@@ -407,4 +431,5 @@ fn main() {
     gntvkrmh(&mndlani);
     pdsrvskrmh(&mndlani);
     arskrmh(&mndlani);
+    pratipdikani(&mndlani);
 }
