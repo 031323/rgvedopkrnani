@@ -324,9 +324,9 @@ fn prtmpuruskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                 .map(|(mi, m)| {
                     m.iter()
                         .enumerate()
-                        .filter(|(_, s)| {
+                        /*.filter(|(_, s)| {
                             s.iter().any(|r| r.crnani.iter().flatten().any(|p| p.mulm == "pitú-"))
-                        })
+                        })*/
                         /*.filter(|(_, s)| {
                             s.iter().all(|r| {
                                 r.strata == "A"
@@ -347,10 +347,10 @@ fn prtmpuruskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                                         && s[ri].crnani.iter().flatten().all(|p| {
                                             vedaweb::drmnamani(&p).iter().all(|&n| {
                                                 /*n != "2"
-                                                    &&*/ n != "1"
-                                                    && n != "VOC"
-                                            }) && p.mulm != "tvám"
-                                                && p.mulm != "ahám"
+                                                    */n != "VOC" &&
+                                                    n != "1"
+                                            }) 
+                                                && p.mulm != "ahám" && p.mulm != "yá-" && p.mulm != "ká-" 
                                         })
                                 })
                                 .map(|ri| format!("{}.{}.{}", mi + 1, si + 1, ri + 1))
@@ -415,6 +415,7 @@ fn pratipdikani(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     )
     .expect("!?");
 }
+
 
 fn main() {
     let args: Vec<_> = std::env::args().collect();
