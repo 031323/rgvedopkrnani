@@ -71,6 +71,14 @@ fn gntvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     std::fs::write("../gntv.krmh", String::from("घ॒न॒त्व॒क्र॒मः\n") + &suktani.iter().map(|s| (0..s.2.len()).map(|ri| format!("{}.{}.{}", s.0 + 1, s.1 + 1, ri + 1)).collect::<Vec<String>>()).flatten().collect::<Vec<String>>().join("\n"));
 }
 
+fn suktgaurvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    let mut suktani: Vec<(usize, usize, &Vec<vedaweb::Rk>)> = mndlani.iter().enumerate().filter(|(mi, _)| *mi > 0 && *mi < 7).map(|(mi, m)| {
+        m.iter().enumerate().filter(|(_, s)| s[0].strata=="A").map(|(si, s)| (mi, si, s)).collect::<Vec<(usize, usize, &Vec<vedaweb::Rk>)>>()
+    }).flatten().collect();
+    suktani.sort_by_key(|a| a.2.iter().filter(|r| r.strata=="A").fold(0, |p, r| p + r.crnani.iter().flatten().count()));
+    std::fs::write("../gaurv.krmh", String::from("सू॒क्त॒गौ॒र॒व॒क्र॒मः\n") + &suktani.iter().map(|s| (0..s.2.len()).filter(|&ri| s.2[ri].strata=="A").map(|ri| format!("{}.{}.{}", s.0 + 1, s.1 + 1, ri + 1)).collect::<Vec<String>>()).flatten().collect::<Vec<String>>().join("\n"));
+}
+
 fn ltvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     fn ltvm(r: &vedaweb::Rk) -> f32 {
         let mut lsnkya = 0.0;
@@ -456,4 +464,5 @@ fn main() {
     pdsrvskrmh(&mndlani);
     arskrmh(&mndlani);
     pratipdikani(&mndlani);
+    suktgaurvkrmh(&mndlani);
 }
