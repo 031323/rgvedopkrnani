@@ -16,8 +16,8 @@ Ua = [r for r in rch if len(r) > 1 and udattanth(r[-2]) and anudattanth(r[-1])]
 Au = [r for r in rch if len(r) > 1 and anudattanth(r[-2]) and udattanth(r[-1])]
 Aa = [r for r in rch if len(r) > 1 and anudattanth(r[-2]) and anudattanth(r[-1])]
 uU = [a for r in rch for a in r[:-1] if udattanth(a) and udattanth(r[-1])]
-aU = [a for r in rch for a in r[:-1] if udattanth(a) and anudattanth(r[-1])]
-uA = [a for r in rch for a in r[:-1] if anudattanth(a) and udattanth(r[-1])]
+aU = [a for r in rch for a in r[:-1] if anudattanth(a) and udattanth(r[-1])]
+uA = [a for r in rch for a in r[:-1] if udattanth(a) and anudattanth(r[-1])]
 aA = [a for r in rch for a in r[:-1] if anudattanth(a) and anudattanth(r[-1])]
 
 def nidrsnm(a):
