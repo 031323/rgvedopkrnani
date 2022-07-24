@@ -314,6 +314,8 @@ fn rgvedpath(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     );
 }
 
+
+
 fn arskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     std::fs::write(
         "../ars.krmh",
@@ -446,6 +448,121 @@ fn pratipdikani(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     .expect("!?");
 }
 
+fn indrkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    std::fs::write(
+        "../indr.krmh",
+        String::from("इ॒न्द्र॒क्र॒मः\n")
+            + &mndlani
+                .iter()
+                .enumerate()
+                .filter(|(mi, _)| {*mi > 0 && *mi < 7})
+                .map(|(mi, m)| {
+                    m.iter()
+                        .enumerate()
+                        .filter(|(si, s)| s.iter().any(|r| r.crnani.iter().any(|c| c.iter().any(|p| p.mulm == "índra-"))))
+                        .map(|(si, s)| {
+                            (0..s.len())
+                                .filter(|&ri| {
+                                    s[ri].strata == "A" && s[ri].crnani.iter().any(|c| c.iter().any(|p| p.mulm == "yá-" && vedaweb::drmnamani(&p).iter().any(|&n| String::from(n) == "SG") && vedaweb::drmnamani(&p).iter().any(|&n| String::from(n) == "M"))) && s[ri].crnani.iter().all(|c| c.iter().all(|p| p.mulm != "índra-" && p.mulm != "agní-"))
+                                })
+                                .map(|ri| format!("{}.{}.{}", mi + 1, si + 1, ri + 1))
+                                .collect::<Vec<String>>()
+                                .join("\n")
+                        })
+                        .filter(|ss| ss != "")
+                        .collect::<Vec<String>>()
+                        .join("\n")
+                })
+                .filter(|ms| ms != "")
+                .collect::<Vec<String>>()
+                .join("\n"),
+    );
+}
+
+fn upmakrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    std::fs::write(
+        "../upma.krmh",
+        String::from("उ॒प॒मा॒क्र॒मः\n")
+            + &mndlani
+                .iter()
+                .enumerate()
+                .filter(|(mi, _)| {*mi > 0 && *mi < 7})
+                .map(|(mi, m)| {
+                    m.iter()
+                        .enumerate()
+                        .map(|(si, s)| {
+                            (0..s.len())
+                                .filter(|&ri| {
+                                    s[ri].strata == "A" && s[ri].crnani.iter().any(|c| c.iter().any(|p| p.mulm == "ná")) && s[ri].crnani.iter().all(|c| c.iter().all(|p| p.mulm != "índra-" && p.mulm != "agní-"))
+                                })
+                                .map(|ri| format!("{}.{}.{}", mi + 1, si + 1, ri + 1))
+                                .collect::<Vec<String>>()
+                                .join("\n")
+                        })
+                        .filter(|ss| ss != "")
+                        .collect::<Vec<String>>()
+                        .join("\n")
+                })
+                .filter(|ms| ms != "")
+                .collect::<Vec<String>>()
+                .join("\n"),
+    );
+}
+
+fn abyaskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    std::fs::write(
+        "../abyas.krmh",
+        String::from("अ॒भ्या॒स॒क्र॒मः\n")
+            + &mndlani
+                .iter()
+                .enumerate()
+                .filter(|(mi, _)| {*mi > 0 && *mi < 10})
+                .map(|(mi, m)| {
+                    m.iter()
+                        .enumerate()
+                        .map(|(si, s)| {
+                            (0..s.len())
+                                .filter(|&ri| {
+                                    (s[ri].strata == "A" || s[ri].strata == "S")
+                                    &&  {let abystm = |i:usize,j:usize| -> bool {s[i].crnani.iter().any(|c| s[j].crnani.iter().any(|c2| c == c2))}; (0..ri).any(|r2| abystm(ri,r2)) || (ri+1..s.len()).any(|r2| abystm(ri,r2))}
+                                })
+                                .map(|ri| format!("{}.{}.{}", mi + 1, si + 1, ri + 1))
+                                .collect::<Vec<String>>()
+                                .join("\n")
+                        })
+                        .filter(|ss| ss != "")
+                        .collect::<Vec<String>>()
+                        .join("\n")
+                })
+                .filter(|ms| ms != "")
+                .collect::<Vec<String>>()
+                .join("\n"),
+    );
+}
+
+fn smbodnani(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    let mut smbodnani: Vec<String> = vec![];
+    for m in mndlani {
+        for s in m {
+            for r in s {
+                for c in &r.crnani {
+                    for p in c {
+                        if vedaweb::drmnamani(p).iter().any(|&n| String::from(n)=="nominal stem") && vedaweb::drmnamani(p).iter().any(|&n| String::from(n)=="SG") && vedaweb::drmnamani(p).iter().any(|&n| String::from(n)=="F"){
+                            smbodnani.push(String::from(&p.mulm));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    smbodnani.sort();
+    smbodnani.dedup();
+    std::fs::write(
+        "../smbodnani",
+        smbodnani.join("\n")
+    )
+    .expect("!?");
+}
 
 fn main() {
     let args: Vec<_> = std::env::args().collect();
@@ -455,7 +572,7 @@ fn main() {
     }
 
     let mndlani = vedaweb::aropnm(&args[1]).unwrap().0;
-    rgvedpath(&mndlani);
+    //rgvedpath(&mndlani);
     prtmpuruskrmh(&mndlani);
     ltvkrmh(&mndlani);
     grdrkrmh(&mndlani);
@@ -464,5 +581,9 @@ fn main() {
     pdsrvskrmh(&mndlani);
     arskrmh(&mndlani);
     pratipdikani(&mndlani);
+    smbodnani(&mndlani);
     suktgaurvkrmh(&mndlani);
+    upmakrmh(&mndlani);
+    indrkrmh(&mndlani);
+    abyaskrmh(&mndlani);
 }
