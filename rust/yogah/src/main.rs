@@ -540,6 +540,44 @@ fn abyaskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     );
 }
 
+fn somkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    std::fs::write(
+        "../som.krmh",
+        String::from("सो॒म॒क्र॒मः\n")
+            + &mndlani
+                .iter()
+                .enumerate()
+                .filter(|(mi, _)| {*mi > 0 && *mi < 7})
+                .map(|(mi, m)| {
+                    m.iter()
+                        .enumerate()
+                        .map(|(si, s)| {
+                            (0..s.len())
+                                .filter(|&ri| {
+                                    let r = &s[ri];
+                                    (r.strata == "A" || r.strata == "S")
+                                    &&  {let sm = &r.smhita;
+                                        sm.contains("sóm")
+                                        || sm.contains("soma")
+                                        || sm.contains("mádh")
+                                        || sm.contains("madhu")
+                                        || r.crnani.iter().any(|c| c.iter().any(|p| p.mulm == "ándhas-" || p.mulm == "índu-" || p.mulm == "pītí-" || p.mulm == "√pā- 2"))
+                                    }
+                                })
+                                .map(|ri| format!("{}.{}.{}", mi + 1, si + 1, ri + 1))
+                                .collect::<Vec<String>>()
+                                .join("\n")
+                        })
+                        .filter(|ss| ss != "")
+                        .collect::<Vec<String>>()
+                        .join("\n")
+                })
+                .filter(|ms| ms != "")
+                .collect::<Vec<String>>()
+                .join("\n"),
+    );
+}
+
 fn smbodnani(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     let mut smbodnani: Vec<String> = vec![];
     for m in mndlani {
@@ -586,4 +624,5 @@ fn main() {
     upmakrmh(&mndlani);
     indrkrmh(&mndlani);
     abyaskrmh(&mndlani);
+    somkrmh(&mndlani);
 }
