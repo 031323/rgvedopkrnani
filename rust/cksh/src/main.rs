@@ -90,12 +90,6 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
             a    { color: blue; text-decoration: none; }
             .b   { color: blue; font-weight: bold; }
         </style>
-        <body>
-        <script src='https://031323.github.io/suvak/suvak3.js'></script>
-        <script>
-            suvagarmbh(function(){}, function(){console.log('reload');setTimeout(function(){location.reload()},5000)})
-        </script>
-        </body>
     ";
 
     HttpResponse::Ok()
