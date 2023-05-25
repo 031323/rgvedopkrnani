@@ -124,7 +124,7 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
                     "<p><a href='{}'>X</a> <b>{}</b> {}</p>",
                     istnirdesh(&None),
                     istm,
-                    {
+                    /*{
                         let pos = data.p.binary_search(&istm.to_string()).unwrap();
                         let it: Vec<usize> = (0..data.c[0].len()).collect();
                         let posj = &data.c[pos];
@@ -146,7 +146,7 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
                     .take(10)
                     .map(|i| String::from(&data.p[*i]))
                     .collect::<Vec<String>>()
-                    .join(" ")
+                    .join(" ")*/""
                 ),
                 None => String::new(),
             },
