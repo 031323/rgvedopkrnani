@@ -138,7 +138,7 @@ async fn hello(data: web::Data<Data>, web::Query(info): web::Query<Anuyogh>) -> 
                             })
                             .collect();
                         let mut v: Vec<usize> = (0..data.p.len()).filter(|&i| i != pos).collect();
-                        v.sort_by(|i, j| cos[*j].partial_cmp(&cos[*i]).unwrap());
+                        //v.sort_by(|i, j| cos[*j].partial_cmp(&cos[*i]).unwrap());
 
                         v
                     }
