@@ -455,7 +455,7 @@ fn invanti(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
             for r in s {
                 for c in &r.crnani {
                     for p in c {
-                        if vedaweb::drmnamani(p).iter().any(|&n| String::from(n)=="nominal stem") && (p.mulm.ends_with("in-") || p.mulm.ends_with("ín-")) {
+                        if vedaweb::drmnamani(p).iter().any(|&n| String::from(n)=="nominal stem") && (p.mulm.ends_with("in-") || p.mulm.ends_with("ín-") && p.rupm.ends_with("naḥ")) {
                             invanti.push(String::from(&p.mulm));
                         }
                     }
