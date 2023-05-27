@@ -472,6 +472,30 @@ fn invanti(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     .expect("!?");
 }
 
+fn anvanti(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    let mut anvanti: Vec<String> = vec![];
+    for m in mndlani {
+        for s in m {
+            for r in s {
+                for c in &r.crnani {
+                    for p in c {
+                        if vedaweb::drmnamani(p).iter().any(|&n| String::from(n)=="N") && (p.mulm.ends_with("an-") || p.mulm.ends_with("án-")) {
+                            anvanti.push(String::from(&p.mulm));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    anvanti.sort();
+    anvanti.dedup();
+    std::fs::write(
+        "../anvanti",
+        anvanti.join("\n")
+    )
+    .expect("!?");
+}
+
 fn indrkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     std::fs::write(
         "../indr.krmh",
@@ -650,4 +674,5 @@ fn main() {
     abyaskrmh(&mndlani);
     somkrmh(&mndlani);
     invanti(&mndlani);
+    anvanti(&mndlani);
 }
