@@ -659,6 +659,7 @@ fn main() {
 
     let mndlani = vedaweb::aropnm(&args[1]).unwrap().0;
     //rgvedpath(&mndlani);
+    crnsngrhnm(&mndlani);
     prtmpuruskrmh(&mndlani);
     ltvkrmh(&mndlani);
     grdrkrmh(&mndlani);
