@@ -100,11 +100,10 @@ pub fn aropnm(c_salt_dir: &str) -> Result<Rgvedh, std::io::Error> {
                             "navamám",
                             "daśamám",
                         ];
-                        println!("{}", c_salt_dir);
                         println!("{} máṇḍalam ā́ropyate.", snkyah[m - 1]);
                         roxmltree::Document::parse(
                             &std::fs::read_to_string(format!(
-                                "{}/rv_book_{:0>2}.tei",
+                                "{}/rigveda/TEI/rv_book_{:0>2}.tei",
                                 c_salt_dir, m
                             ).replace("//","/"))
                             .unwrap(),

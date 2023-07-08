@@ -1,5 +1,59 @@
-pub static DRMANI: [&str; 40] = [
+pub static DRMANI: [&str; 51] = [
+    "1",
+    "2",
+    "3",
+    "ABL",
+    "ACC",
+    "ACT",
+    "AOR",
+    "COND",
+    "CVB",
+    "DAT",
+    "DES", //
+    "DU",
+    "F",
+    "FUT",
+    "GEN",
+    "IMP",
+    "IMP-si", //
+    "IND",
+    "INF",
+    "INJ",
+    "INS",
+    "INT", //??
+    "IPRF",
+    "LOC",
+    "M",
+    "MED",
+    "N",
+    "NOM",
+    "OPT",
+    "PASS",
+    "CAUS", //
+    "PL",
+    "PLUPRF",
+    "PPP",
+    "PPP",
+    "PREC", //?
+    "PRF",
+    "PRS",
+    "PTCP",
+    "PTCP-ta", //
+    "PTCP-na",
+    "SBJV",
     "SG",
+    "VOC",
+    "invariable",
+    "nominal stem",
+    "pronoun",
+    "root",
+    "SUP", //degree
+    "CMP",
+    "LP", //local particle
+];
+
+/*
+"SG",
     "PL",
     "DU",
     "1",
@@ -39,4 +93,4 @@ pub static DRMANI: [&str; 40] = [
     "nominal stem",
     "pronoun",
     "root",
-];
+*/

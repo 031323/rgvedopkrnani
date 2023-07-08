@@ -1,3 +1,3 @@
-[submodule "c-salt_vedaweb_tei"]
-	path = c-salt_vedaweb_tei
-	url = https://github.com/031323/c-salt_vedaweb_tei.git
+[submodule "vedaweb-data"]
+	path = vedaweb-data
+	url = https://github.com/031323/vedaweb-data.git
