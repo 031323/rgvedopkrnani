@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 vedaweb = { path = "../vedaweb" }
+regex = "1.10"

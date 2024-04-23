@@ -1,5 +1,6 @@
-    use vedaweb;
+use vedaweb;
 use std::process::Command;
+use regex::Regex;
 
 fn upsrstkriyarmbah(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     for r in mndlani.iter().flatten().flatten() {
@@ -103,6 +104,15 @@ fn ltvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     std::fs::write("../ltv.krmh", String::from("ल॒त्व॒क्र॒मः\n") + &rch.iter().map(|r| format!("{}.{}.{}", r.0 + 1, r.1 + 1, r.2 + 1)).collect::<Vec<String>>().join("\n"));
 }
 
+fn savkasleknm(s: &str) -> String {
+    let re1 = Regex::new("(([कखगघङचछजझञटठडढणतथदधनऩपफबभमयरऱलळऴवशषसह]्)*[कखगघङचछजझञटठडढणतथदधनऩपफबभमयरऱलळऴवशषसह])").unwrap();
+    let re2 = Regex::new("([अआइईउऊऋऌऍऎएऐऑऒओऔॠॡ])").unwrap();
+    let re3 = Regex::new("([^ ]+)([।॥])").unwrap();
+    re3.replace_all(&re2.replace_all(&re1.replace_all(s, " $1"), " $1"), "\\mbox{$1 $2}")
+        .replace("  ", " ")
+        .replace("ऽ", "")
+}
+
 fn crnsngrhnm(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     std::fs::write("../crnani2", mndlani.iter().flatten().flatten().map(|r| String::from(&r.smhita)).collect::<Vec<String>>().join("\n\n"));
 
@@ -145,8 +155,12 @@ fn crnsngrhnm(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
 
     std::fs::write("../pdani", mndlani.iter().flatten().flatten().map(|r| r.crnani.iter().map(|c| c.iter().map(|p| String::from(&p.rupm)).collect::<Vec<String>>().join(" ")).collect::<Vec<String>>().join("\n")).collect::<Vec<String>>().join("\n\n"));
     std::fs::write("../crnani", mndlani.iter().flatten().flatten().filter(|r| r.strata=="A").map(|r| String::from(&r.smhita)).collect::<Vec<String>>().join("\n\n"));
-    std::fs::write("../nagri2", mndlani.iter().flatten().flatten().map(|r| String::from(&r.nagri)).collect::<Vec<String>>().join("\n\n"));
     std::fs::write("../nagri", mndlani.iter().flatten().flatten().filter(|r| r.strata=="A").map(|r| String::from(&r.nagri)).collect::<Vec<String>>().join("\n\n"));
+    std::fs::write("../nagri2", 
+        //savkasleknm(
+            mndlani.iter().flatten().flatten().map(|r| String::from(&r.nagri)).collect::<Vec<String>>().join("\n\n")
+        //)
+    );
 
 }
 
@@ -676,4 +690,5 @@ fn main() {
     somkrmh(&mndlani);
     invanti(&mndlani);
     anvanti(&mndlani);
+    println!("{}", savkasleknm("1.2.6 वाय॒विन्द्र॑श्च सुन्व॒त आ या॑त॒मुप॑ निष्कृ॒तम्। म॒क्ष्वि१॒॑त्था धि॒या न॑रा॥"));
 }
