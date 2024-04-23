@@ -664,6 +664,43 @@ fn smbodnani(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
     .expect("!?");
 }
 
+fn nagrynkah(i: usize) -> String {
+    let ankah = "०१२३४५६७८९";
+    i.to_string().chars().map(|c| ankah.chars().nth(c.to_digit(10).unwrap() as usize).unwrap()).collect()
+}
+
+fn granth(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
+    let snkyah = ["प्रथमं", "द्वितीयं", "तृतीयं", "चतुर्थं", "पञ्चमं", "षष्ठं", "सप्तमं", "अष्टमं", "नवमं", "दशमं"];
+    std::fs::write(
+        "../granth.tex",
+        &mndlani
+            .iter()
+            .enumerate()
+            //.filter(|(mi, _)| *mi == 1)
+            .map(|(mi, m)| {
+                String::from("\\chapter*{\\jaini") + &savkasleknm(&(snkyah[mi].to_string() + "मण्डलम्")) + "}\n" +
+                    &m.iter()
+                        .enumerate()
+                        .map(|(si, s)| {
+                            savkasleknm(
+                                &(s.iter()
+                                .enumerate()
+                                .map(|(ri, r)| r.nagri.replace("\n","। ") + "॥ " + &nagrynkah(ri + 1) + "॥")
+                                .collect::<Vec<String>>()
+                                .join("\n") + " " + &nagrynkah(si + 1) + "॥\n\n")
+                            )
+                        })
+                        .filter(|ss| ss != "")
+                        .collect::<Vec<String>>()
+                        .join("\n")
+                })
+                .filter(|ms| ms != "")
+                .collect::<Vec<String>>()
+                .join("\n"),
+    );
+}
+
+
 fn main() {
     let args: Vec<_> = std::env::args().collect();
     if args.len() != 2 {
@@ -690,5 +727,5 @@ fn main() {
     somkrmh(&mndlani);
     invanti(&mndlani);
     anvanti(&mndlani);
-    println!("{}", savkasleknm("1.2.6 वाय॒विन्द्र॑श्च सुन्व॒त आ या॑त॒मुप॑ निष्कृ॒तम्। म॒क्ष्वि१॒॑त्था धि॒या न॑रा॥"));
+    granth(&mndlani);
 }
