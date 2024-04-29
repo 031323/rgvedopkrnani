@@ -111,6 +111,7 @@ fn savkasleknm(s: &str) -> String {
     re3.replace_all(&re2.replace_all(&re1.replace_all(s, " $1"), " $1"), "\\mbox{$1 $2}")
         .replace("  ", " ")
         .replace("ऽ", "")
+        .replace("र् ऋ", "र्ऋ")
 }
 
 fn crnsngrhnm(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
@@ -678,11 +679,13 @@ fn granth(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
             .enumerate()
             //.filter(|(mi, _)| *mi == 1)
             .map(|(mi, m)| {
-                String::from("\\chapter*{\\jaini") + &savkasleknm(&(snkyah[mi].to_string() + "मण्डलम्")) + "}\n" +
+                let mndlnam = savkasleknm(&(snkyah[mi].to_string() + "मण्डलम्")); 
+                String::from("\\addchap{\\jaini\\fontdimen2\\font=0.0ex ") + &mndlnam + "}\n" +
                     &m.iter()
                         .enumerate()
                         .map(|(si, s)| {
-                            savkasleknm(
+                            format!("\\def\\rightmark{{\\jaini\\fontdimen2\\font=0.0ex सू॰ {}}}\n", nagrynkah(si + 1)) +
+                            &savkasleknm(
                                 &(s.iter()
                                 .enumerate()
                                 .map(|(ri, r)| r.nagri.replace("\n","। ") + "॥ " + &nagrynkah(ri + 1) + "॥")
@@ -692,7 +695,9 @@ fn granth(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
                         })
                         .filter(|ss| ss != "")
                         .collect::<Vec<String>>()
-                        .join("\n")
+                        .join("\n") +
+                        &savkasleknm(&(String::from("\\begin{center}इतिऋग्वेदीयायांशाकलसंहितायां\\\\") + &mndlnam + "॥\\end{center}\n")
+                            .replace("यां\\\\ अ", "याम्\\\\अ")) 
                 })
                 .filter(|ms| ms != "")
                 .collect::<Vec<String>>()
