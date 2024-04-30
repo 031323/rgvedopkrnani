@@ -680,11 +680,11 @@ fn granth(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
             //.filter(|(mi, _)| *mi == 1)
             .map(|(mi, m)| {
                 let mndlnam = savkasleknm(&(snkyah[mi].to_string() + "मण्डलम्")); 
-                String::from("\\addchap{\\jaini\\fontdimen2\\font=0.0ex ") + &mndlnam + "}\n" +
+                String::from("\\addchap{\\avakasah ") + &mndlnam + "}\n" +
                     &m.iter()
                         .enumerate()
                         .map(|(si, s)| {
-                            format!("\\def\\rightmark{{\\jaini\\fontdimen2\\font=0.0ex सू॰ {}}}\n", nagrynkah(si + 1)) +
+                            format!("\\def\\rightmark{{सू॰ {}}}\n", nagrynkah(si + 1)) +
                             &savkasleknm(
                                 &(s.iter()
                                 .enumerate()
