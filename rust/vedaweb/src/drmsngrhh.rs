@@ -1,4 +1,4 @@
-pub static DRMANI: [&str; 51] = [
+pub static DRMANI: [&str; 53] = [
     "1",
     "2",
     "3",
@@ -50,6 +50,8 @@ pub static DRMANI: [&str; 51] = [
     "SUP", //degree
     "CMP",
     "LP", //local particle
+    "GDV", //???
+    "DEN", //???
 ];
 
 /*

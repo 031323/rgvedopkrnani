@@ -210,6 +210,9 @@ pub fn aropnm(c_salt_dir: &str) -> Result<Rgvedh, std::io::Error> {
                                                                     << DRMANI
                                                                         .iter()
                                                                         .position(|&s| {
+                                                                            /*println!("{}",d
+                                                                                .attribute("value")
+                                                                                .unwrap());*/
                                                                             s == d
                                                                                 .attribute("value")
                                                                                 .unwrap()
