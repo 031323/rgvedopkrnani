@@ -4,10 +4,10 @@ pub fn pdmulani(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) -> (Vec<String>, Vec<i32>)
         let mut pdrgyogh: Vec<i32> = Vec::new();
         let mut pdsuktyogh: Vec<i32> = Vec::new();
 
-        for s in mndlani/*[1..9]*/.iter().flatten() {
+        for s in mndlani[0..9].iter().flatten() {
             let v = {
                 let mut v: Vec<String> = s
-                    .iter().map(|r| if false {vec![]} else { r.crnani.iter().flatten().map(|pdm| String::from(&pdm.rupm) + "\t" + &pdm.mulm)
+                    .iter().map(|r| if r.strata == "P" || r.strata == "p" || r.strata == "C" || r.strata == "c" {vec![]} else { r.crnani.iter().flatten().map(|pdm| String::from(&pdm.rupm) + "\t" + &pdm.mulm)
                     .collect::<Vec<String>>()}).flatten().collect();
                 v.sort();
                 v.dedup();
