@@ -49,7 +49,7 @@ fn pdsrvskrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
 }
 
 fn gntvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
-    fn gntvm(su: &(usize, usize, &Vec<vedaweb::Rk>)) -> f32 {
+    /*fn gntvm(su: &(usize, usize, &Vec<vedaweb::Rk>)) -> f32 {
         let mut pdani: Vec<String> = Vec::new();
         let mut pdsnkya = 0;
         for r in su.2 {
@@ -62,22 +62,48 @@ fn gntvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
             }
         }
         pdani.len() as f32 / pdsnkya as f32
+    }*/
+
+    fn gntvm(r: &(usize, usize, usize, &vedaweb::Rk)) -> f32 {
+        let mut pdani: Vec<String> = Vec::new();
+        let mut pdsnkya = 0;
+        for p in r.3.crnani.iter().flatten() {
+            match pdani.binary_search(&p.mulm) {
+                Ok(n) => {},
+                Err(n) => {pdani.insert(n, String::from(&p.mulm));},
+            }
+            pdsnkya += 1;
+        }
+        pdani.len() as f32 // pdsnkya as f32
     }
 
+    let mut rch: Vec<(usize, usize, usize, &vedaweb::Rk)> = mndlani.iter().enumerate().filter(|(mi, _)| true || *mi > 0 && *mi < 7).map(|(mi, m)| {
+        m.iter().enumerate().map(|(si, s)| s.iter().enumerate().filter(|(_, r)| true || r.strata == "A").map((|(ri, r)| (mi, si, ri, r))).collect::<Vec<(usize, usize, usize, &vedaweb::Rk)>>()).flatten().collect::<Vec<(usize, usize, usize, &vedaweb::Rk)>>()
+    }).flatten().collect();
+    
+    rch.sort_by(|a, b| gntvm(a).partial_cmp(&gntvm(b)).unwrap());
+
+    std::fs::write("../gntv.krmh", String::from("घ॒न॒त्व॒क्र॒मः\n") + &rch.iter().map(|r| format!("{}.{}.{}", r.0 + 1, r.1 + 1, r.2 + 1)).collect::<Vec<String>>().join("\n"));
+
+    /*
     let mut suktani: Vec<(usize, usize, &Vec<vedaweb::Rk>)> = mndlani.iter().enumerate().map(|(mi, m)| {
         m.iter().enumerate().filter(|(_, s)| s[0].strata=="A").map(|(si, s)| (mi, si, s)).collect::<Vec<(usize, usize, &Vec<vedaweb::Rk>)>>()
     }).flatten().collect();
     suktani.sort_by(|a, b| gntvm(a).partial_cmp(&gntvm(b)).unwrap());
 
     std::fs::write("../gntv.krmh", String::from("घ॒न॒त्व॒क्र॒मः\n") + &suktani.iter().map(|s| (0..s.2.len()).map(|ri| format!("{}.{}.{}", s.0 + 1, s.1 + 1, ri + 1)).collect::<Vec<String>>()).flatten().collect::<Vec<String>>().join("\n"));
+    */
 }
 
 fn suktgaurvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
-    let mut suktani: Vec<(usize, usize, &Vec<vedaweb::Rk>)> = mndlani.iter().enumerate().filter(|(mi, _)| *mi > 0 && *mi < 7).map(|(mi, m)| {
-        m.iter().enumerate().filter(|(_, s)| s[0].strata=="A").map(|(si, s)| (mi, si, s)).collect::<Vec<(usize, usize, &Vec<vedaweb::Rk>)>>()
+    fn strs(strata: &str) -> bool {
+        strata != "P" && strata != "C" && strata != "p" && strata != "c"
+    }
+    let mut suktani: Vec<(usize, usize, &Vec<vedaweb::Rk>)> = mndlani.iter().enumerate().filter(|(mi, _)| *mi < 9).map(|(mi, m)| {
+        m.iter().enumerate().filter(|(_, s)| s.iter().all(|r| strs(&r.strata))).map(|(si, s)| (mi, si, s)).collect::<Vec<(usize, usize, &Vec<vedaweb::Rk>)>>()
     }).flatten().collect();
-    suktani.sort_by_key(|a| a.2.iter().filter(|r| r.strata=="A").fold(0, |p, r| p + r.crnani.iter().flatten().count()));
-    std::fs::write("../gaurv.krmh", String::from("सू॒क्त॒गौ॒र॒व॒क्र॒मः\n") + &suktani.iter().map(|s| (0..s.2.len()).filter(|&ri| s.2[ri].strata=="A").map(|ri| format!("{}.{}.{}", s.0 + 1, s.1 + 1, ri + 1)).collect::<Vec<String>>()).flatten().collect::<Vec<String>>().join("\n"));
+    suktani.sort_by_key(|a| a.2.iter().filter(|r| strs(&r.strata)).fold(0, |p, r| p + r.crnani.iter().flatten().count()));
+    std::fs::write("../gaurv.krmh", String::from("सू॒क्त॒गौ॒र॒व॒क्र॒मः\n") + &suktani.iter().map(|s| (0..s.2.len()).filter(|&ri| strs(&s.2[ri].strata)).map(|ri| format!("{}.{}.{}", s.0 + 1, s.1 + 1, ri + 1)).collect::<Vec<String>>()).flatten().collect::<Vec<String>>().join("\n"));
 }
 
 fn ltvkrmh(mndlani: &Vec<Vec<Vec<vedaweb::Rk>>>) {
